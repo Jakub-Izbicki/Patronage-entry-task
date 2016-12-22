@@ -46,7 +46,7 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/remove/{id}", method = DELETE)
-    public List<Movie> removeMovieWhereId(@PathVariable("id") long id){
+    public List<Movie> removeMovieWhereId(@PathVariable("id") Long id){
 
         return ms.remove(id);
     }
