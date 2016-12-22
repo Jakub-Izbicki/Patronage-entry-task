@@ -7,7 +7,8 @@ Dokumentacja PL:
 Restowe api bazy filmów. Api udostępnia następujące operacje dla aktorów i filmów:
 
 
-        FILMY:
+FILMY:
+
 
 GET: <app_url>/movies
 
@@ -50,7 +51,8 @@ DELETE: <app_url>/movies/{id}/removeActor/{actorId}
 
 
 
-        AKTORZY:
+AKTORZY:
+
 
 GET: <app_url>/actors
 
