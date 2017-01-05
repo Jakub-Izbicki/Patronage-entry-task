@@ -4,6 +4,7 @@ package com.izbicki.jakub.Service;
 import com.izbicki.jakub.Entity.Actor;
 import com.izbicki.jakub.Entity.Cast;
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Repository.ActorRepository;
 import com.izbicki.jakub.Repository.CastRepository;
 import com.izbicki.jakub.Repository.MovieRepository;
@@ -44,9 +45,9 @@ public class MovieServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę"));
-        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki"));
-        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii."));
+        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę", MovieType.newest, 10f));
+        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki", MovieType.newest, 10f));
+        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii.", MovieType.newest, 10f));
 
         actorRepository.save(new Actor("Bruce Willis"));
         actorRepository.save(new Actor("Jackie Chan"));
@@ -89,7 +90,7 @@ public class MovieServiceTest {
     @Test
     public void testInsert() {
 
-        Movie createdMovie = movieService.insert("title1", "desc1");
+        Movie createdMovie = movieService.insert("title1", "desc1", MovieType.newest, 10f);
 
         Assert.assertNotNull("failure - expected not null", createdMovie);
         Assert.assertNotNull("failure - expected id attribute not null", createdMovie.getId());

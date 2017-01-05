@@ -8,9 +8,6 @@ import javax.persistence.*;
 @Entity
 public class Cast {
 
-//    @Autowired @Qualifier("ActorService")
-//    private ActorService as;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

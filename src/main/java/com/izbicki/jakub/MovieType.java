@@ -1,5 +1,5 @@
 package com.izbicki.jakub;
 
-public enum FilmType {
+public enum MovieType {
     newest, hits, other
 }

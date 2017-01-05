@@ -3,6 +3,7 @@ package com.izbicki.jakub.Controller;
 import com.izbicki.jakub.Entity.Actor;
 import com.izbicki.jakub.Entity.Cast;
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Service.CastService;
 import com.izbicki.jakub.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,16 @@ public class MovieController {
 
     @RequestMapping(value = "/insert", method = PUT)
     public Movie insertMovie(@RequestParam(value = "title") String title,
-                             @RequestParam(value = "desc") String desc){
+                             @RequestParam(value = "desc") String desc,
+                             @RequestParam(value = "type") int type,
+                             @RequestParam(value = "price") float price){
 
-        return ms.insert(title, desc);
+        if ((type - 2) > 0)
+            throw new IllegalArgumentException();
+
+        MovieType movieType = MovieType.values()[type];
+
+        return ms.insert(title, desc, movieType, price);
     }
 
     @RequestMapping(value = "/remove/{id}", method = DELETE)

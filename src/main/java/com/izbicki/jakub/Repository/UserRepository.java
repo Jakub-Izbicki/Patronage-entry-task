@@ -1,7 +1,10 @@
 package com.izbicki.jakub.Repository;
 
-/**
- * Created by Jakub on 05.01.2017.
- */
-public class UserRepository {
+
+import com.izbicki.jakub.Entity.User;
+import org.springframework.data.repository.CrudRepository;
+
+
+public interface UserRepository extends CrudRepository<User, Long> {
+
 }

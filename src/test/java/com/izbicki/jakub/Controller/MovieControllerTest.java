@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.izbicki.jakub.Entity.Actor;
 import com.izbicki.jakub.Entity.Cast;
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Service.ActorService;
 import com.izbicki.jakub.Service.CastService;
 import com.izbicki.jakub.Service.MovieService;
@@ -59,9 +60,9 @@ public class MovieControllerTest {
     public void testGetAllMovies() throws Exception {
 
         List<Movie> movieList = Arrays.asList(
-                new Movie("title1", "desc1"),
-                new Movie("title2", "desc2"),
-                new Movie("title3", "desc3"));
+                new Movie("title1", "desc1", MovieType.newest, 10f),
+                new Movie("title2", "desc2", MovieType.newest, 10f),
+                new Movie("title3", "desc3", MovieType.newest, 10f));
 
         when(movieService.selectAll()).thenReturn(movieList);
 
@@ -82,7 +83,7 @@ public class MovieControllerTest {
     @Test
     public void testGetMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1");
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
         movie.setId(1L);
 
         when(movieService.selectMovie(anyLong())).thenReturn(movie);
@@ -116,10 +117,10 @@ public class MovieControllerTest {
     @Test
     public void testCreateMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1");
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
         movie.setId(1L);
 
-        when(movieService.insert(anyString(), anyString())).thenReturn(movie);
+        when(movieService.insert(anyString(), anyString(), anyObject(), anyFloat())).thenReturn(movie);
 
         String uri = "/movies/insert";
 
@@ -134,7 +135,8 @@ public class MovieControllerTest {
         String content = result.getResponse().getContentAsString();
         int status = result.getResponse().getStatus();
 
-        verify(movieService, times(1)).insert(anyString(), anyString());
+        verify(movieService, times(1))
+                .insert(anyString(), anyString(), anyObject(), anyFloat());
 
         Assert.assertEquals("failure - expected HTTP status 200", 200, status);
         Assert.assertTrue("failure - expected HTTP response body to have a value", content.trim().length() > 0);
@@ -154,7 +156,7 @@ public class MovieControllerTest {
     @Test
     public void testUpdateMovie() throws Exception {
 
-        Movie movie = new Movie("newTitle", "newDesc");
+        Movie movie = new Movie("newTitle", "newDesc", MovieType.newest, 10f);
         movie.setId(1L);
 
         when(movieService.update(anyLong(), anyString(), anyString())).thenReturn(movie);
@@ -193,9 +195,9 @@ public class MovieControllerTest {
     public void testRemoveMovie() throws Exception {
 
         List<Movie> movieList = Arrays.asList(
-                new Movie("title1", "desc1"),
-                new Movie("title2", "desc2"),
-                new Movie("title3", "desc3"));
+                new Movie("title1", "desc1", MovieType.newest, 10f),
+                new Movie("title2", "desc2", MovieType.newest, 10f),
+                new Movie("title3", "desc3", MovieType.newest, 10f));
 
         when(movieService.remove(anyLong())).thenReturn(movieList);
 
@@ -240,7 +242,7 @@ public class MovieControllerTest {
     @Test
     public void testAddActorToMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1");
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
         Actor actor = new Actor("name1");
         Cast cast = new Cast(movie, actor);
 
@@ -279,7 +281,7 @@ public class MovieControllerTest {
     @Test
     public void testRemoveActorFromMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1");
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
         Actor actor = new Actor("name1");
         Actor actor2 = new Actor("name2");
         List<Cast> castList = Arrays.asList(new Cast(movie, actor), new Cast(movie, actor2));

@@ -1,6 +1,8 @@
 package com.izbicki.jakub.Entity;
 
 
+import com.izbicki.jakub.MovieType;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,12 +16,33 @@ public class Movie {
     private Long id;
     private String title;
     private String description;
+    private MovieType type;
+    private float price;
+
 
     protected Movie() {}
 
-    public Movie(String title, String description) {
+    public Movie(String title, String description, MovieType type, float price) {
         this.title = title;
         this.description = description;
+        this.type = type;
+        this.price = price;
+    }
+
+    public MovieType getType() {
+        return type;
+    }
+
+    public void setType(MovieType type) {
+        this.type = type;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public Long getId() {

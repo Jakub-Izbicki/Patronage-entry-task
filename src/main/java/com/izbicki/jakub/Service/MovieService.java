@@ -1,6 +1,7 @@
 package com.izbicki.jakub.Service;
 
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,9 +35,9 @@ public class MovieService {
         return movieRepository.findOne(id);
     }
 
-    public Movie insert(String title, String desc){
+    public Movie insert(String title, String desc, MovieType type, float price){
 
-        Movie movie = new Movie(title, desc);
+        Movie movie = new Movie(title, desc, type, price);
 
         movieRepository.save(movie);
         return movie;
