@@ -32,17 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                    .antMatchers("/movies").hasRole(ROLE_USER)
                     .anyRequest().authenticated()
                 .and()
+                    .csrf().disable()
                     .httpBasic();
     }
-
-
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//
-//        auth.inMemoryAuthentication()
-//                .withUser("admin").password("pass").roles(ROLE_ADMIN).and()
-//                .withUser("user").password("pass").roles(ROLE_USER);
-//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -56,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
 
         final Properties users = new Properties();
-        users.put("user","pass,ROLE_USER,enabled");
-        users.put("admin","pass,ROLE_ADMIN,enabled");
+        users.put("user","pass,ROLE_USER,enabled"); //login = user, password = pass
+        users.put("admin","pass,ROLE_ADMIN,enabled"); //login = admin, password = pass
         return new InMemoryUserDetailsManager(users);
     }
 }

@@ -53,16 +53,16 @@ public class Zad1JakubIzbickiApplication implements CommandLineRunner{
 			Random random = new Random();
 
 			movieRepository.save(new Movie(
-					"n" + i, "desc", MovieType.newest, random.nextInt(50) + 1));
+					"n" + i, "desc", MovieType.newest, random.nextInt(50) + 1, true));
 			movieRepository.save(new Movie(
-					"h" + i, "desc", MovieType.hits, random.nextInt(50) + 1));
+					"h" + i, "desc", MovieType.hits, random.nextInt(50) + 1, true));
 			movieRepository.save(new Movie(
-					"o" + i, "desc", MovieType.other, random.nextInt(50) + 1));
+					"o" + i, "desc", MovieType.other, random.nextInt(50) + 1, true));
 
-			userRepository.save(new User("user" + i, "pass", 0f, ROLE_USER));
+			userRepository.save(new User("user" + i, 0f, ROLE_USER));
 		}
 
-		userRepository.save(new User("admin", "pass", 0f, ROLE_ADMIN));
-		userRepository.save(new User("user", "pass", 0f, ROLE_USER));
+		userRepository.save(new User("admin", 0f, ROLE_ADMIN));
+		userRepository.save(new User("user", 0f, ROLE_USER));
 	}
 }

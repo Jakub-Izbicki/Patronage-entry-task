@@ -86,4 +86,28 @@ public class MovieController {
 
         return cs.remove(movieId, actorId);
     }
+
+    @RequestMapping(value = "/newest", method = GET)
+    private List<Movie> selectNewest(){
+
+        return ms.selectNewest();
+    }
+
+    @RequestMapping(value = "/hits", method = GET)
+    private List<Movie> selectHits(){
+
+        return ms.selectHits();
+    }
+
+    @RequestMapping(value = "/other", method = GET)
+    private List<Movie> selectOther(){
+
+        return ms.selectOther();
+    }
+
+    @RequestMapping(value = "/available", method = GET)
+    private List<Movie> selectAvaliable(){
+
+        return ms.selectAvaliable();
+    }
 }

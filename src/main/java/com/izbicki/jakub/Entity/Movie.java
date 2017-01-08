@@ -3,10 +3,7 @@ package com.izbicki.jakub.Entity;
 
 import com.izbicki.jakub.MovieType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Movie {
@@ -14,19 +11,57 @@ public class Movie {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
+
     private String title;
+
     private String description;
+
+    @Enumerated(EnumType.ORDINAL)
     private MovieType type;
+
     private float price;
+
+    private Boolean isAvailable;
+
+    @ManyToOne(cascade=CascadeType.MERGE)
+    @JoinColumn(name = "user", referencedColumnName = "id")
+    private User rentedBy;
 
 
     protected Movie() {}
 
-    public Movie(String title, String description, MovieType type, float price) {
+    public Movie(MovieType type, float price, Boolean isAvailable) {
+        this.title = null;
+        this.description = null;
+        this.type = type;
+        this.price = price;
+        this.isAvailable = isAvailable;
+        this.rentedBy = null;
+    }
+
+    public Movie(String title, String description, MovieType type, float price, Boolean isAvailable) {
         this.title = title;
         this.description = description;
         this.type = type;
         this.price = price;
+        this.isAvailable = isAvailable;
+        this.rentedBy = null;
+    }
+
+    public User getRentedBy() {
+        return rentedBy;
+    }
+
+    public void setRentedBy(User rentedBy) {
+        this.rentedBy = rentedBy;
+    }
+
+    public Boolean getAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(Boolean avaliable) {
+        isAvailable = avaliable;
     }
 
     public MovieType getType() {

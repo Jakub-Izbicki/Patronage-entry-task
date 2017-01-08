@@ -45,9 +45,9 @@ public class MovieServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę", MovieType.newest, 10f));
-        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki", MovieType.newest, 10f));
-        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii.", MovieType.newest, 10f));
+        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę", MovieType.newest, 10f, true));
+        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki", MovieType.newest, 10f, true));
+        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii.", MovieType.newest, 10f, true));
 
         actorRepository.save(new Actor("Bruce Willis"));
         actorRepository.save(new Actor("Jackie Chan"));

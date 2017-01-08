@@ -60,9 +60,9 @@ public class MovieControllerTest {
     public void testGetAllMovies() throws Exception {
 
         List<Movie> movieList = Arrays.asList(
-                new Movie("title1", "desc1", MovieType.newest, 10f),
-                new Movie("title2", "desc2", MovieType.newest, 10f),
-                new Movie("title3", "desc3", MovieType.newest, 10f));
+                new Movie("title1", "desc1", MovieType.newest, 10f, true),
+                new Movie("title2", "desc2", MovieType.newest, 10f, true),
+                new Movie("title3", "desc3", MovieType.newest, 10f, true));
 
         when(movieService.selectAll()).thenReturn(movieList);
 
@@ -83,7 +83,7 @@ public class MovieControllerTest {
     @Test
     public void testGetMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f, true);
         movie.setId(1L);
 
         when(movieService.selectMovie(anyLong())).thenReturn(movie);
@@ -117,7 +117,7 @@ public class MovieControllerTest {
     @Test
     public void testCreateMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f, true);
         movie.setId(1L);
 
         when(movieService.insert(anyString(), anyString(), anyObject(), anyFloat())).thenReturn(movie);
@@ -156,7 +156,7 @@ public class MovieControllerTest {
     @Test
     public void testUpdateMovie() throws Exception {
 
-        Movie movie = new Movie("newTitle", "newDesc", MovieType.newest, 10f);
+        Movie movie = new Movie("newTitle", "newDesc", MovieType.newest, 10f, true);
         movie.setId(1L);
 
         when(movieService.update(anyLong(), anyString(), anyString())).thenReturn(movie);
@@ -195,9 +195,9 @@ public class MovieControllerTest {
     public void testRemoveMovie() throws Exception {
 
         List<Movie> movieList = Arrays.asList(
-                new Movie("title1", "desc1", MovieType.newest, 10f),
-                new Movie("title2", "desc2", MovieType.newest, 10f),
-                new Movie("title3", "desc3", MovieType.newest, 10f));
+                new Movie("title1", "desc1", MovieType.newest, 10f, true),
+                new Movie("title2", "desc2", MovieType.newest, 10f, true),
+                new Movie("title3", "desc3", MovieType.newest, 10f, true));
 
         when(movieService.remove(anyLong())).thenReturn(movieList);
 
@@ -242,7 +242,7 @@ public class MovieControllerTest {
     @Test
     public void testAddActorToMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f, true);
         Actor actor = new Actor("name1");
         Cast cast = new Cast(movie, actor);
 
@@ -281,7 +281,7 @@ public class MovieControllerTest {
     @Test
     public void testRemoveActorFromMovie() throws Exception {
 
-        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f);
+        Movie movie = new Movie("title1", "desc1", MovieType.newest, 10f, true);
         Actor actor = new Actor("name1");
         Actor actor2 = new Actor("name2");
         List<Cast> castList = Arrays.asList(new Cast(movie, actor), new Cast(movie, actor2));

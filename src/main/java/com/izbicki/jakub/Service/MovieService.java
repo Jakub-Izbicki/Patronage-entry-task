@@ -37,7 +37,7 @@ public class MovieService {
 
     public Movie insert(String title, String desc, MovieType type, float price){
 
-        Movie movie = new Movie(title, desc, type, price);
+        Movie movie = new Movie(title, desc, type, price, true);
 
         movieRepository.save(movie);
         return movie;
@@ -60,5 +60,45 @@ public class MovieService {
             movieRepository.updateMovieDesc(id, desc);
 
         return movieRepository.findOne(id);
+    }
+
+    public List<Movie> selectNewest(){
+
+        List<Movie> moviesList = new ArrayList<>();
+
+        for(Movie movie : movieRepository.selectAvailableNewest())
+            moviesList.add(movie);
+
+        return moviesList;
+    }
+
+    public List<Movie> selectHits(){
+
+        List<Movie> moviesList = new ArrayList<>();
+
+        for(Movie movie : movieRepository.selectAvailableHits())
+            moviesList.add(movie);
+
+        return moviesList;
+    }
+
+    public List<Movie> selectOther(){
+
+        List<Movie> moviesList = new ArrayList<>();
+
+        for(Movie movie : movieRepository.selectAvailableOther())
+            moviesList.add(movie);
+
+        return moviesList;
+    }
+
+    public List<Movie> selectAvaliable(){
+
+        List<Movie> moviesList = new ArrayList<>();
+
+        for(Movie movie : movieRepository.selectAvailable())
+            moviesList.add(movie);
+
+        return moviesList;
     }
 }

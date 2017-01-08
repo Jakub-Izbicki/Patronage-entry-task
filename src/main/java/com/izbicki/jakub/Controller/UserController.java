@@ -1,63 +1,78 @@
 package com.izbicki.jakub.Controller;
 
 
+import com.izbicki.jakub.Entity.Movie;
 import com.izbicki.jakub.Entity.User;
 import com.izbicki.jakub.Repository.UserRepository;
+import com.izbicki.jakub.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.security.Principal;
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 @RestController
 @RequestMapping(value = "/user", produces = "application/json")
 public class UserController {
 
-    private final InMemoryUserDetailsManager inMemoryUserDetailsManager;
-
-    @Autowired
-    public UserController(InMemoryUserDetailsManager inMemoryUserDetailsManager) {
-        this.inMemoryUserDetailsManager = inMemoryUserDetailsManager;
-    }
+    @Autowired @Qualifier("UserService")
+    private UserService us;
 
     @Autowired
     private UserRepository userRepository;
 
+    @RequestMapping(value = "", method = GET)
+    public User selectUser(Principal principal){
+
+        return us.selectUser(principal);
+    }
+
     @RequestMapping(value = "/all")
     public List<User> selectAll(){
 
-        List<User> userList = new ArrayList<>();
-
-        for(User user : userRepository.findAll()){
-
-            userList.add(user);
-        }
-
-        return userList;
+        return us.selectAll();
     }
 
-//    @RequestMapping("exists/{username}")
-//    public boolean userExists(@PathVariable("username") String username ) {
-//        return inMemoryUserDetailsManager.userExists(username);
-//    }
+    @RequestMapping(value = "/create", method = POST)
+    public User add(@RequestHeader(value = "login") String login,
+                    @RequestHeader(value = "password") String password) {
 
-    @RequestMapping("add/{login}/{password}")
-    public User add(@PathVariable("login") String login,
-                    @PathVariable("password") String password) {
+        return us.addUser(login, password, false);
+    }
 
-        GrantedAuthority sga = new SimpleGrantedAuthority("ROLE_USER");
+    @RequestMapping(value = "/createAdmin", method = POST)
+    public User addAdmin(@RequestHeader(value = "login") String login,
+                    @RequestHeader(value = "password") String password) {
 
-        inMemoryUserDetailsManager.createUser(
-                new org.springframework.security.core.userdetails.User(login, password,
-                    new ArrayList<GrantedAuthority>(Arrays.asList(sga))));
+        return us.addUser(login, password, true);
+    }
 
-        return new User(login, password, 0f, "ROLE_USER");
+    @RequestMapping(value = "/rent", method = POST)
+    public List<Movie> rentMovies(@RequestParam(value = "movieId") List<Long> movieIdsList, Principal principal){
+
+        return us.rentMovies(movieIdsList, principal);
+    }
+
+    @RequestMapping(value = "/movies", method = GET)
+    public List<Movie> selectRentedMovies(Principal principal){
+
+        return us.selectRentedMovies(principal);
+    }
+
+    @RequestMapping(value = "/movies/{userId}", method = GET)
+    public List<Movie> selectRentedMoviesByUserId(@PathVariable("userId") Long userId){
+
+        return us.selectRentedMoviesByUserId(userId);
+    }
+
+    @RequestMapping(value = "/return", method = POST)
+    public List<Movie> returnMovies(@RequestParam(value = "movieId") List<Long> movieIdsList, Principal principal){
+
+        return us.returnMovies(movieIdsList, principal);
     }
 }
