@@ -12,13 +12,12 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@RequestMapping(value = "/cast", produces = "application/json")
 public class CastController {
 
     @Autowired @Qualifier("CastService")
     private CastService cs;
 
-    @RequestMapping(value = "", method = GET)
+    @RequestMapping(value = "admin/cast", method = GET)
     private List<Cast> selectAllCast(){
 
         return cs.selectAll();

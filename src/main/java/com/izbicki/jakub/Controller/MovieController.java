@@ -18,7 +18,6 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@RequestMapping(value = "/movies", produces="application/json")
 public class MovieController {
 
     @Autowired @Qualifier("MovieService")
@@ -27,19 +26,19 @@ public class MovieController {
     @Autowired @Qualifier("CastService")
     private CastService cs;
 
-    @RequestMapping(value = "", method = GET)
+    @RequestMapping(value = "admin/movies", method = GET)
     public List<Movie> selectAllMovies(){
 
         return ms.selectAll();
     }
 
-    @RequestMapping(value = "/{id}", method = GET)
+    @RequestMapping(value = "/movies/{id}", method = GET)
     public Movie selectMovieWhereId(@PathVariable("id") long id){
 
         return ms.selectMovie(id);
     }
 
-    @RequestMapping(value = "/insert", method = PUT)
+    @RequestMapping(value = "admin/movies/insert", method = PUT)
     public Movie insertMovie(@RequestParam(value = "title") String title,
                              @RequestParam(value = "desc") String desc,
                              @RequestParam(value = "type") int type,
@@ -53,59 +52,59 @@ public class MovieController {
         return ms.insert(title, desc, movieType, price);
     }
 
-    @RequestMapping(value = "/remove/{id}", method = DELETE)
+    @RequestMapping(value = "admin/movies/remove/{id}", method = DELETE)
     public List<Movie> removeMovieWhereId(@PathVariable("id") Long id){
 
         return ms.remove(id);
     }
 
-    @RequestMapping(value = "/update/{id}", method = POST)
-    public Movie updateMovieWhereId(@PathVariable("id") int id,
+    @RequestMapping(value = "admin/movies/update/{id}", method = POST)
+    public Movie getActorsForMovie(@PathVariable("id") int id,
                                    @RequestParam(value="title", required = false) String title,
                                    @RequestParam(value="desc", required = false) String desc){
 
         return ms.update(id, title, desc);
     }
 
-    @RequestMapping(value = "/{id}/actors", method = GET)
-    public List<Actor> updateMovieWhereId(@PathVariable("id") Long id){
+    @RequestMapping(value = "/movies/{id}/actors", method = GET)
+    public List<Actor> getActorsForMovie(@PathVariable("id") Long id){
 
         return cs.getActorsForMovie(id);
     }
 
-    @RequestMapping(value = "/{id}/addActor/{actorId}", method = PUT)
+    @RequestMapping(value = "admin/movies/{id}/addActor/{actorId}", method = PUT)
     private Cast insertCast(@PathVariable(value = "id")Long movieId,
                             @PathVariable(value = "actorId")Long actorId){
 
         return cs.insert(movieId, actorId);
     }
 
-    @RequestMapping(value = "/{id}/removeActor/{actorId}", method = DELETE)
+    @RequestMapping(value = "admin/movies/{id}/removeActor/{actorId}", method = DELETE)
     private List<Cast> removeCast(@PathVariable(value = "id") Long movieId,
                                   @PathVariable(value = "actorId")Long actorId){
 
         return cs.remove(movieId, actorId);
     }
 
-    @RequestMapping(value = "/newest", method = GET)
+    @RequestMapping(value = "/movies/newest", method = GET)
     private List<Movie> selectNewest(){
 
         return ms.selectNewest();
     }
 
-    @RequestMapping(value = "/hits", method = GET)
+    @RequestMapping(value = "/movies/hits", method = GET)
     private List<Movie> selectHits(){
 
         return ms.selectHits();
     }
 
-    @RequestMapping(value = "/other", method = GET)
+    @RequestMapping(value = "/movies/other", method = GET)
     private List<Movie> selectOther(){
 
         return ms.selectOther();
     }
 
-    @RequestMapping(value = "/available", method = GET)
+    @RequestMapping(value = "/movies/available", method = GET)
     private List<Movie> selectAvaliable(){
 
         return ms.selectAvaliable();

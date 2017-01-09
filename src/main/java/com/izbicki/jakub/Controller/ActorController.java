@@ -14,38 +14,37 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@RequestMapping(value = "/actors", produces="application/json")
 public class ActorController {
 
     @Autowired @Qualifier("ActorService")
     private ActorService as;
 
-    @RequestMapping(value = "", method = GET)
+    @RequestMapping(value = "/actors", method = GET)
     public List<Actor> selectAllActors(){
 
         return as.selectAll();
     }
 
-    @RequestMapping(value = "/{id}", method = GET)
+    @RequestMapping(value = "/actors/{id}", method = GET)
     public Actor selectActorWhereId(@PathVariable("id") long id){
 
         return as.select(id);
     }
 
-    @RequestMapping(value = "/insert", method = PUT)
+    @RequestMapping(value = "admin/actors/insert", method = PUT)
     public Actor insertActor(@RequestParam(value = "name") String name  ){
 
         return as.insert(name);
     }
 
-    @RequestMapping(value = "/remove/{id}", method = DELETE)
+    @RequestMapping(value = "admin/actors/remove/{id}", method = DELETE)
     public List<Actor> removeActorWhereId(@PathVariable("id") long id){
 
         return as.remove(id);
     }
 
-    @RequestMapping(value = "/update/{id}", method = POST)
-    public Actor updateMovieWhereId(@PathVariable("id") long id,
+    @RequestMapping(value = "admin/actors/update/{id}", method = POST)
+    public Actor updateActorWhereId(@PathVariable("id") long id,
                                     @RequestParam(value="name") String name){
 
         return as.update(id, name);

@@ -103,7 +103,7 @@ public class UserService {
 
         List<Movie> moviesToRentJpa = movieRepository.getMoviesByIds(moviesIds);
 
-        //copy movies into new list so jpa wont persist changed prices
+        //copy movies into new list so jpa won't persist changed prices of movies
         List<Movie> moviesToRent = createMovieListFromAnother(moviesToRentJpa);
 
         float newWalletValue = 0;
@@ -114,7 +114,7 @@ public class UserService {
         for (Movie movie : moviesToRent)
             newWalletValue += movie.getPrice();
 
-        //if has at least 2 "newest" - has 25% off
+        //if has at least 2 "newest" - then has 25% off
         newWalletValue = calculateDiscount(moviesToRent, newWalletValue);
 
         updateWallet(user.getLogin(), user.getRentalWallet() + newWalletValue);
@@ -145,6 +145,10 @@ public class UserService {
         userRepository.updateWallet(login, walletValue);
     }
 
+    /**
+     * Checks whether the user can rent the specified amount of movies,
+     * Any user can have the maximum of 10 rented movies at the same time.
+     */
     private Boolean canRent(User user, int numberToRent){
 
         List<Movie> movies = movieRepository.selectRentedMovies(user);
@@ -154,6 +158,10 @@ public class UserService {
         return (numberRented + numberToRent) <= 10;
     }
 
+    /**
+     * Checks how many movies the user can rent for free (every three movies, the user can rent one from "other" for free)
+     * and sets their price to 0.
+     */
     private List<Movie> calculateFreeMovies(List<Movie> movieList){
 
         List<Movie> moviesNewestHits = new ArrayList<Movie>();
@@ -195,6 +203,9 @@ public class UserService {
         return setOtherMoviesFree(movieList, numberOfRemainingFreeMovies);
     }
 
+    /**
+     * Sets the price to 0 in the given number of "other" films in the list.
+     */
     private List<Movie> setOtherMoviesFree(List<Movie> movieList, int numberOfFreeMovies){
 
         int counter = 0;
@@ -232,6 +243,9 @@ public class UserService {
         return currentWalletValue;
     }
 
+    /**
+     * Copies a list of movie objects
+     */
     private List<Movie> createMovieListFromAnother(List<Movie> sourceMovieList){
 
         List<Movie> newMovieList = new ArrayList<>();
