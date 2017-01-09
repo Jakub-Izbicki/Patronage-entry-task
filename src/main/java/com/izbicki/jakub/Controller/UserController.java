@@ -32,7 +32,7 @@ public class UserController {
         return us.selectUser(principal);
     }
 
-    @RequestMapping(value = "/user/all")
+    @RequestMapping(value = "admin/user/all", method = GET)
     public List<User> selectAll(){
 
         return us.selectAll();
