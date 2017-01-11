@@ -18,7 +18,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public final static String ROLE_ADMIN = "ADMIN";
     public final static String ROLE_USER = "USER";
 
-
     /**
      * Determines the resource access for different account types
      */

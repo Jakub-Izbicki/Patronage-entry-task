@@ -52,12 +52,16 @@ public class MovieService {
         return selectAll();
     }
 
-    public Movie update(long id, String title, String desc){
+    public Movie update(long id, String title, String desc, Integer type, Float price){
 
         if (title != null)
             movieRepository.updateMovieTitle(id, title);
         if (desc != null)
             movieRepository.updateMovieDesc(id, desc);
+        if (type != null)
+            movieRepository.updateMovieType(id, type);
+        if (price != null)
+            movieRepository.updateMoviePrice(id, price);
 
         return movieRepository.findOne(id);
     }

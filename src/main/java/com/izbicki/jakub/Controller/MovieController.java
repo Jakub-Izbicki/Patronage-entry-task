@@ -59,15 +59,17 @@ public class MovieController {
     }
 
     @RequestMapping(value = "admin/movies/update/{id}", method = POST)
-    public Movie getActorsForMovie(@PathVariable("id") int id,
-                                   @RequestParam(value="title", required = false) String title,
-                                   @RequestParam(value="desc", required = false) String desc){
+    public Movie updateMovie(@PathVariable("id") int id,
+                             @RequestParam(value="title", required = false) String title,
+                             @RequestParam(value="desc", required = false) String desc,
+                             @RequestParam(value="type", required = false) Integer type,
+                             @RequestParam(value="price", required = false) Float price){
 
-        return ms.update(id, title, desc);
+        return ms.update(id, title, desc, type, price);
     }
 
     @RequestMapping(value = "/movies/{id}/actors", method = GET)
-    public List<Actor> getActorsForMovie(@PathVariable("id") Long id){
+    public List<Actor> updateMovie(@PathVariable("id") Long id){
 
         return cs.getActorsForMovie(id);
     }

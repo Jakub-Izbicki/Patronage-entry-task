@@ -25,6 +25,17 @@ public interface MovieRepository extends CrudRepository<Movie, Long> {
 
     @Modifying
     @Transactional
+    @Query("UPDATE Movie SET type = :type WHERE id = :id")
+    int updateMovieType(@Param("id") Long id, @Param("type") int type);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Movie SET price = :price WHERE id = :id")
+    int updateMoviePrice(@Param("id") Long id, @Param("price") float price);
+
+
+    @Modifying
+    @Transactional
     @Query("SELECT m FROM Movie m WHERE m.type = 0 AND m.isAvailable = true")
     List<Movie> selectAvailableNewest();
 

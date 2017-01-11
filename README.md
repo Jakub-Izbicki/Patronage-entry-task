@@ -105,6 +105,8 @@ PUT: <app_url>/admin/movies/insert
     parametry zapytania:
         title - tytuł filmu
         desc - opis filmu
+        type - typ filmu (0 - nowości, 1 - hity, 2 - pozostałe)
+        price - cena filmu
 
 DELETE: <app_url>/admin/movies/remove/{id}
 
@@ -116,6 +118,8 @@ POST: <app_url>/admin/movies/update/{id}
     parametry zapytania:
         title - nowy tytuł filmu
         desc - nowy opis filmu
+        type - nowy typ filmu (0 - nowości, 1 - hity, 2 - pozostałe)
+        price - nowa cena filmu
 
 GET: <app_url>/movies/{id}/actors
 
