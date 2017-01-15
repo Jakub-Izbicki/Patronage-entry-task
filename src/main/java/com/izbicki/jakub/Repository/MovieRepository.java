@@ -56,6 +56,11 @@ public interface MovieRepository extends CrudRepository<Movie, Long> {
 
     @Modifying
     @Transactional
+    @Query("SELECT m FROM Movie m WHERE m.id IN :idList")
+    List<Movie> selectMoviesWhereId(@Param("idList") List<Long> idList);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
     @Query("UPDATE Movie SET isAvailable = false, rentedBy = :user WHERE id IN :idList")
     void rentMovies(@Param("user") User user, @Param("idList") List<Long> idList);
 
@@ -66,7 +71,7 @@ public interface MovieRepository extends CrudRepository<Movie, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Movie SET isAvailable = true WHERE id IN :idList")
+    @Query("UPDATE Movie SET isAvailable = true, rentedBy = null WHERE id IN :idList")
     void returnMovies(@Param("idList") List<Long> idList);
 
     @Modifying

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -42,7 +43,7 @@ public class MovieController {
     public Movie insertMovie(@RequestParam(value = "title") String title,
                              @RequestParam(value = "desc") String desc,
                              @RequestParam(value = "type") int type,
-                             @RequestParam(value = "price") float price){
+                             @RequestParam(value = "price") BigDecimal price){
 
         if ((type - 2) > 0)
             throw new IllegalArgumentException();

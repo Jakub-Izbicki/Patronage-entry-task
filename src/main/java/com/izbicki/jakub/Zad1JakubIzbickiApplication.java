@@ -11,7 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.Random;
+import java.math.BigDecimal;
 
 import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_ADMIN;
 import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
@@ -19,6 +19,10 @@ import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
 @SpringBootApplication
 //@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 public class Zad1JakubIzbickiApplication implements CommandLineRunner{
+
+	private static final BigDecimal newestPrice = new BigDecimal(40);
+	private static final BigDecimal hitsPrice = new BigDecimal(25);
+	private static final BigDecimal otherPrice = new BigDecimal(10);
 
 	@Autowired
 	private MovieRepository movieRepository;
@@ -50,19 +54,17 @@ public class Zad1JakubIzbickiApplication implements CommandLineRunner{
 
 		for (int i = 0; i < 10; i++){
 
-			Random random = new Random();
+			movieRepository.save(new Movie(
+					"n" + i, "desc", MovieType.newest, newestPrice, true));
+			movieRepository.save(new Movie(
+					"h" + i, "desc", MovieType.hits, hitsPrice, true));
+			movieRepository.save(new Movie(
+					"o" + i, "desc", MovieType.other, otherPrice, true));
 
-			movieRepository.save(new Movie(
-					"n" + i, "desc", MovieType.newest, random.nextInt(50) + 1, true));
-			movieRepository.save(new Movie(
-					"h" + i, "desc", MovieType.hits, random.nextInt(50) + 1, true));
-			movieRepository.save(new Movie(
-					"o" + i, "desc", MovieType.other, random.nextInt(50) + 1, true));
-
-			userRepository.save(new User("user" + i, 0f, ROLE_USER));
+			userRepository.save(new User("user" + i, BigDecimal.ZERO, ROLE_USER));
 		}
 
-		userRepository.save(new User("admin", 0f, ROLE_ADMIN));
-		userRepository.save(new User("user", 0f, ROLE_USER));
+		userRepository.save(new User("admin", BigDecimal.ZERO, ROLE_ADMIN));
+		userRepository.save(new User("user", BigDecimal.ZERO, ROLE_USER));
 	}
 }

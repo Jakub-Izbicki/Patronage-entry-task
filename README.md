@@ -8,7 +8,7 @@ Restowe api wypożyczalni filmów.
 
 ZADANIE 2: (nowe)
 
-Dostęp do api zabezpieczony jest autoryzacją typu Basic Auth. Wymagane jest podanie loginu i hasła w headerze wraz
+Dostęp do api zabezpieczony jest uwierzytelnieniem typu Basic Auth. Wymagane jest podanie loginu i hasła w headerze wraz
 z wysyłanym zapytaniem. Przykładowi użytkownicy zdefiniowani są w pliku WebSecurityConfig (inMemoryUserDetailsManager).
 
 Występują dwa typy użytkowników: USER - użytkownik zwykły, ADMIN - administrator. Użytkownicy zwykli mają dostęp do pobierania
@@ -17,7 +17,7 @@ Podaczas tworzenia nowego użytkownika autentykacja nie jest wymagana (z wyjątk
 czego mają dostęp tylko admini).
 Do pozostałych operacji mają dostęp tylko użytkownicy o roli ADMIN.
 
-List dostępnych operacji:
+Lista dostępnych operacji:
 
 USER:
 

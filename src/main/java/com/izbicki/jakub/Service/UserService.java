@@ -1,16 +1,20 @@
 package com.izbicki.jakub.Service;
 
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.Entity.RentalDetails;
 import com.izbicki.jakub.Entity.User;
 import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Repository.MovieRepository;
 import com.izbicki.jakub.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +25,13 @@ import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
 
 @Component("UserService")
 public class UserService {
+
+    private static final String moviesNotAvailableMsg = "Error: One or more selected movies are not avaliable";
+    private static final String exceededRentalLimitMsg = "Error: Maximum of 10 movies can be rented.";
+    private static final String unavailableLoginMsg = "Error: Login not avaliable.";
+    private static final String userNotFoundMsg = "Error: User not found.";
+    private static final String moviesNotRentedMsg = "Error: One or more given movies are not rented by the current user.";
+    private static final String moviesNotFoundMsg = "Error: One or more specified movies do no exist.";
 
     @Autowired
     private UserRepository userRepository;
@@ -35,7 +46,7 @@ public class UserService {
         this.inMemoryUserDetailsManager = inMemoryUserDetailsManager;
     }
 
-    public User selectUser(Principal principal){
+    private User selectPrincipal(Principal principal){
 
         String login = principal.getName();
 
@@ -45,6 +56,16 @@ public class UserService {
             return null;
 
         return userList.get(0);
+    }
+
+    public ResponseEntity selectUser(Principal principal){
+
+        User user = selectPrincipal(principal);
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
+
+        return ResponseEntity.ok(user);
     }
 
     public List<User> selectAll(){
@@ -62,10 +83,10 @@ public class UserService {
         return inMemoryUserDetailsManager.userExists(login);
     }
 
-    public User addUser(String login, String password, Boolean isAdmin){
+    public ResponseEntity addUser(String login, String password, Boolean isAdmin){
 
         if (isUserExists(login))
-            return null; //login is unavailable
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(unavailableLoginMsg); //login is unavailable
 
         String role;
 
@@ -80,67 +101,91 @@ public class UserService {
                 new org.springframework.security.core.userdetails.User(
                         login, password, new ArrayList<GrantedAuthority>(Arrays.asList(sga))));
 
-        User user = new User(login, 0f, role);
+        User user = new User(login, new BigDecimal(0), role);
 
         userRepository.save(user);
 
-        return user;
+        return ResponseEntity.ok(user);
     }
 
-    public List<Movie> selectRentedMovies(Principal principal){
+    public ResponseEntity selectRentedMovies(Principal principal){
 
-        User user = selectUser(principal);
+        User user = selectPrincipal(principal);
 
-        return movieRepository.selectRentedMovies(user);
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
+
+        return ResponseEntity.ok(movieRepository.selectRentedMovies(user));
     }
 
-    public List<Movie> rentMovies(List<Long> moviesIds, Principal principal){
+    public ResponseEntity rentMovies(List<Long> moviesIds, Principal principal){
 
-        User user = selectUser(principal);
+        User user = selectPrincipal(principal);
 
-        if (!canRent(user, moviesIds.size()))
-            return null; //can only rent max of ten movies
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
+
+        if (!isAllMoviesExist(moviesIds))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotFoundMsg);
 
         List<Movie> moviesToRentJpa = movieRepository.getMoviesByIds(moviesIds);
+
+        if (!isAllMoviesAvaliable(moviesToRentJpa))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotAvailableMsg);
+
+        if (!canRent(user, moviesIds.size()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceededRentalLimitMsg); //can only rent max of ten movies
+
 
         //copy movies into new list so jpa won't persist changed prices of movies
         List<Movie> moviesToRent = createMovieListFromAnother(moviesToRentJpa);
 
-        float newWalletValue = 0;
+        BigDecimal amountToPay = new BigDecimal(0);
 
         //every 3 films user gets one "other" for free
         moviesToRent = calculateFreeMovies(moviesToRent);
 
         for (Movie movie : moviesToRent)
-            newWalletValue += movie.getPrice();
+            amountToPay = amountToPay.add(movie.getPrice());
 
         //if has at least 2 "newest" - then has 25% off
-        newWalletValue = calculateDiscount(moviesToRent, newWalletValue);
+        amountToPay = calculateDiscount(moviesToRent, amountToPay);
 
-        updateWallet(user.getLogin(), user.getRentalWallet() + newWalletValue);
+        updateWallet(user.getLogin(), user.getRentalWallet().add(amountToPay));
 
         movieRepository.rentMovies(user, moviesIds);
 
-        return selectRentedMovies(principal);
+        RentalDetails rentalDetails = new RentalDetails(amountToPay, movieRepository.selectMoviesWhereId(moviesIds));
+
+        return ResponseEntity.ok(rentalDetails);
     }
 
-    public List<Movie> selectRentedMoviesByUserId(Long userId){
+    public ResponseEntity selectRentedMoviesByUserId(Long userId){
 
         User user = userRepository.findOne(userId);
 
-        return movieRepository.selectRentedMovies(user);
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
+
+        return ResponseEntity.ok(movieRepository.selectRentedMovies(user));
     }
 
-    public List<Movie> returnMovies(List<Long> moviesIds, Principal principal){
+    public ResponseEntity returnMovies(List<Long> moviesIds, Principal principal){
 
-        User user = selectUser(principal);
+        User user = selectPrincipal(principal);
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
+
+        if (!isAllReturnedMoviesAreRented(moviesIds, user))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotRentedMsg);
 
         movieRepository.returnMovies(moviesIds);
 
-        return movieRepository.selectRentedMovies(user);
+        return ResponseEntity.ok(movieRepository.selectRentedMovies(user));
     }
 
-    private void updateWallet(String login, float walletValue){
+    private void updateWallet(String login, BigDecimal walletValue){
 
         userRepository.updateWallet(login, walletValue);
     }
@@ -149,7 +194,7 @@ public class UserService {
      * Checks whether the user can rent the specified amount of movies,
      * Any user can have the maximum of 10 rented movies at the same time.
      */
-    private Boolean canRent(User user, int numberToRent){
+    private boolean canRent(User user, int numberToRent){
 
         List<Movie> movies = movieRepository.selectRentedMovies(user);
 
@@ -212,9 +257,10 @@ public class UserService {
 
         for (Movie movie : movieList){
 
-            if (movie.getType() == MovieType.other && movie.getPrice() != 0f){
+            if (movie.getType() == MovieType.other &&
+                    (movie.getPrice().signum() != 0)){
 
-                movie.setPrice(0f);
+                movie.setPrice(BigDecimal.ZERO);
                 counter++;
             }
 
@@ -225,7 +271,7 @@ public class UserService {
         return movieList;
     }
 
-    private float calculateDiscount(List<Movie> movieList, float currentWalletValue){
+    private BigDecimal calculateDiscount(List<Movie> movieList, BigDecimal currentWalletValue){
 
         int counter = 0;
 
@@ -235,8 +281,8 @@ public class UserService {
                 counter++;
 
             if (counter >= 2){
-                float discount = 0.25f * currentWalletValue;
-                return currentWalletValue - discount;
+                BigDecimal discount = currentWalletValue.multiply(new BigDecimal("0.25"));
+                return currentWalletValue.subtract(discount);
             }
         }
 
@@ -251,9 +297,57 @@ public class UserService {
         List<Movie> newMovieList = new ArrayList<>();
 
         for (Movie movie : sourceMovieList){
-            newMovieList.add(new Movie(movie.getType(), movie.getPrice(), movie.getAvailable()));
+            newMovieList.add(new Movie(movie.getType(), movie.getPrice(), movie.getIsAvailable()));
         }
 
         return newMovieList;
+    }
+
+    /**
+     * Checks whether all selected movies are avaliable for rental
+     */
+    private boolean isAllMoviesAvaliable(List<Movie> movieList){
+
+        for (Movie movie : movieList){
+
+            if (Boolean.FALSE.compareTo(movie.getIsAvailable()) == 0)
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether all given movies exist in database
+     */
+    private boolean isAllMoviesExist(List<Long> movieIdList){
+
+        for (Long movieId : movieIdList){
+            if (movieRepository.findOne(movieId) == null)
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether all movies that are to be returned are rented by the user
+     */
+    private boolean isAllReturnedMoviesAreRented(List<Long> movieIdList, User user){
+
+        List<Movie> moviesFromDb = movieRepository.selectRentedMovies(user);
+
+        List<Long> idsFromDb = new ArrayList<>();
+
+        for (Movie movie : moviesFromDb)
+            idsFromDb.add(movie.getId());
+
+        for (Long id : movieIdList){
+
+            if (!idsFromDb.contains(id))
+                return false;
+        }
+
+        return true;
     }
 }

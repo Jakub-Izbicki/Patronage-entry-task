@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class MovieService {
         return movieRepository.findOne(id);
     }
 
-    public Movie insert(String title, String desc, MovieType type, float price){
+    public Movie insert(String title, String desc, MovieType type, BigDecimal price){
 
         Movie movie = new Movie(title, desc, type, price, true);
 

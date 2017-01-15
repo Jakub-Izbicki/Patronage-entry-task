@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 public class User {
@@ -13,12 +14,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String login;
-    private float rentalWallet;
+    private BigDecimal rentalWallet;
     private String role;
 
     public User(){};
 
-    public User(String login, float rentalWallet, String role) {
+    public User(String login, BigDecimal rentalWallet, String role) {
         this.login = login;
         this.rentalWallet = rentalWallet;
         this.role = role;
@@ -40,11 +41,11 @@ public class User {
         this.login = login;
     }
 
-    public float getRentalWallet() {
+    public BigDecimal getRentalWallet() {
         return rentalWallet;
     }
 
-    public void setRentalWallet(float rentalWallet) {
+    public void setRentalWallet(BigDecimal rentalWallet) {
         this.rentalWallet = rentalWallet;
     }
 

@@ -4,6 +4,7 @@ package com.izbicki.jakub.Entity;
 import com.izbicki.jakub.MovieType;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class Movie {
@@ -19,7 +20,7 @@ public class Movie {
     @Enumerated(EnumType.ORDINAL)
     private MovieType type;
 
-    private float price;
+    private BigDecimal price;
 
     private Boolean isAvailable;
 
@@ -30,7 +31,7 @@ public class Movie {
 
     protected Movie() {}
 
-    public Movie(MovieType type, float price, Boolean isAvailable) {
+    public Movie(MovieType type, BigDecimal price, Boolean isAvailable) {
         this.title = null;
         this.description = null;
         this.type = type;
@@ -39,7 +40,7 @@ public class Movie {
         this.rentedBy = null;
     }
 
-    public Movie(String title, String description, MovieType type, float price, Boolean isAvailable) {
+    public Movie(String title, String description, MovieType type, BigDecimal price, Boolean isAvailable) {
         this.title = title;
         this.description = description;
         this.type = type;
@@ -56,11 +57,11 @@ public class Movie {
         this.rentedBy = rentedBy;
     }
 
-    public Boolean getAvailable() {
+    public Boolean getIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(Boolean avaliable) {
+    public void setIsAvailable(Boolean avaliable) {
         isAvailable = avaliable;
     }
 
@@ -72,11 +73,11 @@ public class Movie {
         this.type = type;
     }
 
-    public float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

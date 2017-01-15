@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -45,9 +46,9 @@ public class MovieServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę", MovieType.newest, 10f, true));
-        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki", MovieType.newest, 10f, true));
-        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii.", MovieType.newest, 10f, true));
+        movieRepository.save(new Movie("Atak pająków", "Oskar za fabułę", MovieType.newest, new BigDecimal("10"), true));
+        movieRepository.save(new Movie("Atak pająków 2", "Zmutowane pająki", MovieType.newest, new BigDecimal("10"), true));
+        movieRepository.save(new Movie("Atak pająków 3", "Zakończenie epickiej trylogii.", MovieType.newest, new BigDecimal("10"), true));
 
         actorRepository.save(new Actor("Bruce Willis"));
         actorRepository.save(new Actor("Jackie Chan"));
@@ -90,7 +91,7 @@ public class MovieServiceTest {
     @Test
     public void testInsert() {
 
-        Movie createdMovie = movieService.insert("title1", "desc1", MovieType.newest, 10f);
+        Movie createdMovie = movieService.insert("title1", "desc1", MovieType.newest, new BigDecimal("10"));
 
         Assert.assertNotNull("failure - expected not null", createdMovie);
         Assert.assertNotNull("failure - expected id attribute not null", createdMovie.getId());
