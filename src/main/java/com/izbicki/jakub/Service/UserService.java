@@ -68,14 +68,14 @@ public class UserService {
         return ResponseEntity.ok(user);
     }
 
-    public List<User> selectAll(){
+    public ResponseEntity selectAll(){
 
         List<User> userList = new ArrayList<>();
 
         for(User user : userRepository.findAll())
             userList.add(user);
 
-        return userList;
+        return ResponseEntity.ok(userList);
     }
 
     private Boolean isUserExists(String login){

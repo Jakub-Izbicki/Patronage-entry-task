@@ -1,7 +1,6 @@
 package com.izbicki.jakub.Controller;
 
 
-import com.izbicki.jakub.Entity.User;
 import com.izbicki.jakub.Repository.UserRepository;
 import com.izbicki.jakub.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "admin/user/all", method = GET)
-    public List<User> selectAll(){
+    public ResponseEntity selectAll(){
 
         return us.selectAll();
     }
