@@ -21,42 +21,42 @@ Lista dostępnych operacji:
 
 USER:
 
-GET: <app_url>/user
+GET: <app_url>/users/current
 
     zwraca informacje o profilu aktualnie zalogowanego usera
     
-GET: <app_url>/admin/user/all
+GET: <app_url>/admin/users
 
     Zwraca listę wszystkich użytkowników aplikacji
     
-POST: <app_url>/user/create
+POST: <app_url>/users
     
     Tworzy nowego użytkownika typu USER o podanych parametrach przesłanych w headerze:
         login - nazwa użytkownika (unikalna)
         password - hasło do konta
 
-POST: <app_url>/admin/user/createAdmin
+POST: <app_url>/admin/users
 
     Tworzy nowego użytkownika typu ADMIN o podanych parametrach przesłanych w headerze:
         login - nazwa użytkownika (unikalna)
         password - hasło do konta
         
-POST: <app_url>/user/rent
+POST: <app_url>/users/movies
 
     Wypożycza filmy o podanych w parametrze zapytania id. Można podać wiele id filmów.
     Parametry:
         movieId - id wybranego filmu, np:
             [..]/user/rent?movieId=1&movieId=6&movieId=13
 
-GET: <app_url>/user/movies
+GET: <app_url>/users/movies
 
     Zwraca listę filmów aktualnie wypożyczonych przez użytkownika
     
-GET: <app_url>/user/movies/{userId}
+GET: <app_url>/users/movies/{userId}
 
     Zwraca listę filmów aktualnie wypożyczonych przez użytkownika o podanym id
     
-POST: <app_url>/user/return
+PUT: <app_url>/users/movies
 
     Zwraca filmy o podanych w parametrze zapytania id. Można podać wiele id filmów.
     Parametry:
@@ -99,7 +99,7 @@ GET: <app_url>/movies/{id}
 
     zwraca film o podanym id
 
-PUT: <app_url>/admin/movies/insert
+POST: <app_url>/admin/movies
 
     tworzy nowy film
     parametry zapytania:
@@ -108,11 +108,11 @@ PUT: <app_url>/admin/movies/insert
         type - typ filmu (0 - nowości, 1 - hity, 2 - pozostałe)
         price - cena filmu
 
-DELETE: <app_url>/admin/movies/remove/{id}
+DELETE: <app_url>/admin/movies/{id}
 
     usuwa z bazy danych film o podanym id
 
-POST: <app_url>/admin/movies/update/{id}
+PUT: <app_url>/admin/movies/{id}
 
     modyfikuje film w bazie danych, można podać jeden z dwóch, lub obydwa parametry
     parametry zapytania:
@@ -125,11 +125,11 @@ GET: <app_url>/movies/{id}/actors
 
     zwraca aktorów grających w filmie o podanym id
 
-PUT: <app_url>/admin/movies/{id}/addActor/{actorId}
+POST: <app_url>/admin/movies/{id}/actors/{actorId}
 
     dodaje aktora o podanym actorId do filmu o podanym id
 
-DELETE: <app_url>/admin/movies/{id}/removeActor/{actorId}
+DELETE: <app_url>/admin/movies/{id}/actors/{actorId}
 
     usuwa z obsady filmu o podanym id aktora o podanym actorId
 
@@ -147,17 +147,17 @@ GET: <app_url>/actors/{id}
 
     zwraca aktora o podanym id
 
-PUT: <app_url>/admin/actors/insert
+POST: <app_url>/admin/actors
 
     tworzy nowego aktora
     parametry zapytania:
         name - imię/nazwisko aktora
 
-DELETE: <app_url>/admin/actors/remove/{id}
+DELETE: <app_url>/admin/actors/{id}
 
     usuwa z bazy danych aktora o podanym id
 
-POST: <app_url>/admin/actors/update/{id}
+PUT: <app_url>/admin/actors/{id}
 
     modyfikuje aktora w bazie danych
     parametry zapytania:

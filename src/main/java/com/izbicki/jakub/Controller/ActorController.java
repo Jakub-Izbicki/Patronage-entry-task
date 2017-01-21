@@ -31,19 +31,19 @@ public class ActorController {
         return as.select(id);
     }
 
-    @RequestMapping(value = "admin/actors/insert", method = PUT)
+    @RequestMapping(value = "/admin/actors", method = POST)
     public Actor insertActor(@RequestParam(value = "name") String name  ){
 
         return as.insert(name);
     }
 
-    @RequestMapping(value = "admin/actors/remove/{id}", method = DELETE)
+    @RequestMapping(value = "/admin/actors/{id}", method = DELETE)
     public List<Actor> removeActorWhereId(@PathVariable("id") long id){
 
         return as.remove(id);
     }
 
-    @RequestMapping(value = "admin/actors/update/{id}", method = POST)
+    @RequestMapping(value = "/admin/actors/{id}", method = PUT)
     public Actor updateActorWhereId(@PathVariable("id") long id,
                                     @RequestParam(value="name") String name){
 

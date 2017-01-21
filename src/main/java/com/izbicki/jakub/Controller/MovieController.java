@@ -27,7 +27,7 @@ public class MovieController {
     @Autowired @Qualifier("CastService")
     private CastService cs;
 
-    @RequestMapping(value = "admin/movies", method = GET)
+    @RequestMapping(value = "/admin/movies", method = GET)
     public List<Movie> selectAllMovies(){
 
         return ms.selectAll();
@@ -39,13 +39,13 @@ public class MovieController {
         return ms.selectMovie(id);
     }
 
-    @RequestMapping(value = "admin/movies/insert", method = PUT)
+    @RequestMapping(value = "/admin/movies", method = POST)
     public Movie insertMovie(@RequestParam(value = "title") String title,
                              @RequestParam(value = "desc") String desc,
                              @RequestParam(value = "type") int type,
                              @RequestParam(value = "price") BigDecimal price){
 
-        if ((type - 2) > 0)
+        if ((type - 2) > 0)                         // poprawić to
             throw new IllegalArgumentException();
 
         MovieType movieType = MovieType.values()[type];
@@ -53,13 +53,13 @@ public class MovieController {
         return ms.insert(title, desc, movieType, price);
     }
 
-    @RequestMapping(value = "admin/movies/remove/{id}", method = DELETE)
+    @RequestMapping(value = "/admin/movies/{id}", method = DELETE)
     public List<Movie> removeMovieWhereId(@PathVariable("id") Long id){
 
         return ms.remove(id);
     }
 
-    @RequestMapping(value = "admin/movies/update/{id}", method = POST)
+    @RequestMapping(value = "/admin/movies/{id}", method = PUT)
     public Movie updateMovie(@PathVariable("id") int id,
                              @RequestParam(value="title", required = false) String title,
                              @RequestParam(value="desc", required = false) String desc,
@@ -75,14 +75,14 @@ public class MovieController {
         return cs.getActorsForMovie(id);
     }
 
-    @RequestMapping(value = "admin/movies/{id}/addActor/{actorId}", method = PUT)
+    @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = POST)
     private Cast insertCast(@PathVariable(value = "id")Long movieId,
                             @PathVariable(value = "actorId")Long actorId){
 
         return cs.insert(movieId, actorId);
     }
 
-    @RequestMapping(value = "admin/movies/{id}/removeActor/{actorId}", method = DELETE)
+    @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = DELETE)
     private List<Cast> removeCast(@PathVariable(value = "id") Long movieId,
                                   @PathVariable(value = "actorId")Long actorId){
 

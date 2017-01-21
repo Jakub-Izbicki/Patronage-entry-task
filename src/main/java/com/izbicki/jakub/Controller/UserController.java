@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 
 @RestController
@@ -24,51 +25,51 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @RequestMapping(value = "/user", method = GET)
+    @RequestMapping(value = "/users/current", method = GET)
     public ResponseEntity selectUser(Principal principal){
 
         return us.selectUser(principal);
     }
 
-    @RequestMapping(value = "admin/user/all", method = GET)
+    @RequestMapping(value = "/admin/users", method = GET)
     public ResponseEntity selectAll(){
 
         return us.selectAll();
     }
 
-    @RequestMapping(value = "/user/create", method = POST)
+    @RequestMapping(value = "/users", method = POST)
     public ResponseEntity add(@RequestHeader(value = "login") String login,
                     @RequestHeader(value = "password") String password) {
 
         return us.addUser(login, password, false);
     }
 
-    @RequestMapping(value = "admin/user/createAdmin", method = POST)
+    @RequestMapping(value = "/admin/users", method = POST)
     public ResponseEntity addAdmin(@RequestHeader(value = "login") String login,
                     @RequestHeader(value = "password") String password) {
 
         return us.addUser(login, password, true);
     }
 
-    @RequestMapping(value = "/user/rent", method = POST)
+    @RequestMapping(value = "/users/movies", method = POST)
     public ResponseEntity rentMovies(@RequestParam(value = "movieId") List<Long> movieIdsList, Principal principal){
 
         return us.rentMovies(movieIdsList, principal);
     }
 
-    @RequestMapping(value = "/user/movies", method = GET)
+    @RequestMapping(value = "/users/movies", method = GET)
     public ResponseEntity selectRentedMovies(Principal principal){
 
         return us.selectRentedMovies(principal);
     }
 
-    @RequestMapping(value = "/user/movies/{userId}", method = GET)
+    @RequestMapping(value = "/users/movies/{userId}", method = GET)
     public ResponseEntity selectRentedMoviesByUserId(@PathVariable("userId") Long userId){
 
         return us.selectRentedMoviesByUserId(userId);
     }
 
-    @RequestMapping(value = "/user/return", method = POST)
+    @RequestMapping(value = "/users/movies", method = PUT)
     public ResponseEntity returnMovies(@RequestParam(value = "movieId") List<Long> movieIdsList, Principal principal){
 
         return us.returnMovies(movieIdsList, principal);

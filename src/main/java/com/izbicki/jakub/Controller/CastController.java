@@ -17,7 +17,7 @@ public class CastController {
     @Autowired @Qualifier("CastService")
     private CastService cs;
 
-    @RequestMapping(value = "admin/cast", method = GET)
+    @RequestMapping(value = "/admin/casts", method = GET)
     private List<Cast> selectAllCast(){
 
         return cs.selectAll();
