@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -69,7 +70,7 @@ public class MovieControllerTest {
                 new Movie("title2", "desc2", MovieType.newest, new BigDecimal("10"), true),
                 new Movie("title3", "desc3", MovieType.newest, new BigDecimal("10"), true));
 
-        when(movieService.selectAll()).thenReturn(movieList);
+        when(movieService.selectAll()).thenReturn(ResponseEntity.ok(movieList));
 
         String uri = "/admin/movies";
 
@@ -91,7 +92,7 @@ public class MovieControllerTest {
         Movie movie = new Movie("title1", "desc1", MovieType.newest, new BigDecimal("10"), true);
         movie.setId(1L);
 
-        when(movieService.selectMovie(anyLong())).thenReturn(movie);
+        when(movieService.selectMovie(anyLong())).thenReturn(ResponseEntity.ok(movie));
 
         String uri = "/movies/1";
 
@@ -125,14 +126,14 @@ public class MovieControllerTest {
         Movie movie = new Movie("title1", "desc1", MovieType.newest, new BigDecimal("10"), true);
         movie.setId(1L);
 
-        when(movieService.insert(anyString(), anyString(), any(MovieType.class), any(BigDecimal.class))).thenReturn(movie);
+        when(movieService.insert(anyString(), anyString(), anyInt(), any(BigDecimal.class))).thenReturn(ResponseEntity.ok(movie));
 
-        String uri = "/admin/movies/insert";
+        String uri = "/admin/movies";
 
         ObjectMapper mapper = new ObjectMapper();
 
         MvcResult result = mvc
-                .perform(MockMvcRequestBuilders.put(uri)
+                .perform(MockMvcRequestBuilders.post(uri)
                         .param("title", "title1")
                         .param("desc", "desc1")
                         .param("type", "0")
@@ -143,7 +144,7 @@ public class MovieControllerTest {
         int status = result.getResponse().getStatus();
 
         verify(movieService, times(1))
-                .insert(anyString(), anyString(), any(MovieType.class), any(BigDecimal.class));
+                .insert(anyString(), anyString(), anyInt(), any(BigDecimal.class));
 
         Assert.assertEquals("failure - expected HTTP status 200", 200, status);
         Assert.assertTrue("failure - expected HTTP response body to have a value", content.trim().length() > 0);
@@ -166,14 +167,14 @@ public class MovieControllerTest {
         Movie movie = new Movie("newTitle", "newDesc", MovieType.newest, new BigDecimal("10"), true);
         movie.setId(1L);
 
-        when(movieService.update(anyLong(), anyString(), anyString(), anyInt(), anyFloat())).thenReturn(movie);
+        when(movieService.update(anyLong(), anyString(), anyString(), anyInt(), anyFloat())).thenReturn(ResponseEntity.ok(movie));
 
-        String uri = "/admin/movies/update/1";
+        String uri = "/admin/movies/1";
 
         ObjectMapper mapper = new ObjectMapper();
 
         MvcResult result = mvc
-                .perform(MockMvcRequestBuilders.post(uri)
+                .perform(MockMvcRequestBuilders.put(uri)
                         .param("title", "newTitle")
                         .param("desc", "newDesc")
                         .accept(MediaType.APPLICATION_JSON)).andReturn();
@@ -206,9 +207,9 @@ public class MovieControllerTest {
                 new Movie("title2", "desc2", MovieType.newest, new BigDecimal("10"), true),
                 new Movie("title3", "desc3", MovieType.newest, new BigDecimal("10"), true));
 
-        when(movieService.remove(anyLong())).thenReturn(movieList);
+        when(movieService.remove(anyLong())).thenReturn(ResponseEntity.ok(movieList));
 
-        String uri = "/admin/movies/remove/4";
+        String uri = "/admin/movies/4";
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders.delete(uri)
                 .accept(MediaType.APPLICATION_JSON)).andReturn();
@@ -230,7 +231,7 @@ public class MovieControllerTest {
                 new Actor("actorName2"),
                 new Actor("actorName3"));
 
-        when(castService.getActorsForMovie(anyLong())).thenReturn(actorList);
+        when(castService.getActorsForMovie(anyLong())).thenReturn(ResponseEntity.ok(actorList));
 
         String uri = "/movies/1/actors";
 
@@ -253,14 +254,14 @@ public class MovieControllerTest {
         Actor actor = new Actor("name1");
         Cast cast = new Cast(movie, actor);
 
-        when(castService.insert(anyLong(), anyLong())).thenReturn(cast);
+        when(castService.insert(anyLong(), anyLong())).thenReturn(ResponseEntity.ok(cast));
 
-        String uri = "/admin/movies/1/addActor/1";
+        String uri = "/admin/movies/1/actors/1";
 
         ObjectMapper mapper = new ObjectMapper();
 
         MvcResult result = mvc
-                .perform(MockMvcRequestBuilders.put(uri)
+                .perform(MockMvcRequestBuilders.post(uri)
                         .param("title", "title1")
                         .param("desc", "desc1")
                         .accept(MediaType.APPLICATION_JSON)).andReturn();
@@ -293,9 +294,9 @@ public class MovieControllerTest {
         Actor actor2 = new Actor("name2");
         List<Cast> castList = Arrays.asList(new Cast(movie, actor), new Cast(movie, actor2));
 
-        when(castService.remove(anyLong(), anyLong())).thenReturn(castList);
+        when(castService.remove(anyLong(), anyLong())).thenReturn(ResponseEntity.ok(castList));
 
-        String uri = "/admin/movies/1/removeActor/1";
+        String uri = "/admin/movies/1/actors/1";
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders.delete(uri)
                 .accept(MediaType.APPLICATION_JSON)).andReturn();

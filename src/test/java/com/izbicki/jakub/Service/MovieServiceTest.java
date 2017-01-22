@@ -60,7 +60,7 @@ public class MovieServiceTest {
     @Test
     public void testFindAll(){
 
-        List<Movie> movieList = movieService.selectAll();
+        List<Movie> movieList = (List<Movie>) movieService.selectAll().getBody();
 
         Assert.assertNotNull("Failure - expected not null", movieList);
         Assert.assertEquals("Failure - expected list size", 30,  movieList.size());
@@ -71,7 +71,7 @@ public class MovieServiceTest {
 
         Long id = 1L;
 
-        Movie movie = movieService.selectMovie(id);
+        Movie movie = (Movie) movieService.selectMovie(id).getBody();
 
         Assert.assertNotNull("failure - expected not null", movie);
         Assert.assertEquals("failure - expected id attribute match", id,
@@ -83,7 +83,7 @@ public class MovieServiceTest {
 
         Long id = Long.MAX_VALUE;
 
-        Movie movie = movieService.selectMovie(id);
+        Movie movie = (Movie) movieService.selectMovie(id).getBody();
 
         Assert.assertNull("failure - expected null", movie);
     }
@@ -91,13 +91,13 @@ public class MovieServiceTest {
     @Test
     public void testInsert() {
 
-        Movie createdMovie = movieService.insert("title1", "desc1", MovieType.newest, new BigDecimal("10"));
+        Movie createdMovie = (Movie) movieService.insert("title1", "desc1", 0, new BigDecimal("10")).getBody();
 
         Assert.assertNotNull("failure - expected not null", createdMovie);
         Assert.assertNotNull("failure - expected id attribute not null", createdMovie.getId());
         Assert.assertEquals("failure - expected text attribute match", "title1", createdMovie.getTitle());
 
-        List<Movie> movieList = movieService.selectAll();
+        List<Movie> movieList = (List<Movie>) movieService.selectAll().getBody();
 
         Assert.assertEquals("failure - expected size", 31, movieList.size());
     }
@@ -107,11 +107,11 @@ public class MovieServiceTest {
 
         Long id = 1L;
 
-        Movie movie = movieService.selectMovie(id);
+        Movie movie = (Movie) movieService.selectMovie(id).getBody();
 
         Assert.assertNotNull("failure - expected not null", movie);
 
-        Movie updatedMovie = movieService.update(id, "title2", null, null, null);
+        Movie updatedMovie = (Movie) movieService.update(id, "title2", null, null, null).getBody();
 
         Assert.assertNotNull("failure - expected not null", updatedMovie);
         Assert.assertEquals("failure - expected id attribute match", id,
@@ -123,17 +123,17 @@ public class MovieServiceTest {
 
         Long id = 1L;
 
-        Movie movie = movieService.selectMovie(id);
+        Movie movie = (Movie) movieService.selectMovie(id).getBody();
 
         Assert.assertNotNull("failure - expected not null", movie);
 
         movieService.remove(id);
 
-        List<Movie> movieList = movieService.selectAll();
+        List<Movie> movieList = (List<Movie>) movieService.selectAll().getBody();
 
         Assert.assertEquals("failure - expected size", 29, movieList.size());
 
-        Movie deletedMovie = movieService.selectMovie(id);
+        Movie deletedMovie = (Movie) movieService.selectMovie(id).getBody();
 
         Assert.assertNull("failure - expected null", deletedMovie);
 

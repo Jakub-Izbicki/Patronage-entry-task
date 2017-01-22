@@ -3,10 +3,13 @@ package com.izbicki.jakub.Service;
 import com.izbicki.jakub.Entity.Movie;
 import com.izbicki.jakub.Entity.RentalDetails;
 import com.izbicki.jakub.Entity.User;
+import com.izbicki.jakub.Error.ApiCustomException;
+import com.izbicki.jakub.Error.ErrorCodes;
 import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Repository.MovieRepository;
 import com.izbicki.jakub.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,12 +29,8 @@ import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
 @Component("UserService")
 public class UserService {
 
-    private static final String moviesNotAvailableMsg = "Error: One or more selected movies are not avaliable";
-    private static final String exceededRentalLimitMsg = "Error: Maximum of 10 movies can be rented.";
-    private static final String unavailableLoginMsg = "Error: Login not avaliable.";
-    private static final String userNotFoundMsg = "Error: User not found.";
-    private static final String moviesNotRentedMsg = "Error: One or more given movies are not rented by the current user.";
-    private static final String moviesNotFoundMsg = "Error: One or more specified movies do no exist.";
+    @Autowired
+    private ResourceBundleMessageSource exceptionMessageSource;
 
     @Autowired
     private UserRepository userRepository;
@@ -53,7 +52,9 @@ public class UserService {
         List<User> userList = userRepository.selectUserByLogin(login);
 
         if (userList.size() == 0)
-            return null;
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.USER_NOT_FOUND),
+                    getExceptionMsgSource(ErrorCodes.USER_NOT_FOUND_USER));
 
         return userList.get(0);
     }
@@ -61,9 +62,6 @@ public class UserService {
     public ResponseEntity selectUser(Principal principal){
 
         User user = selectPrincipal(principal);
-
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
 
         return ResponseEntity.ok(user);
     }
@@ -86,7 +84,9 @@ public class UserService {
     public ResponseEntity addUser(String login, String password, Boolean isAdmin){
 
         if (isUserExists(login))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(unavailableLoginMsg); //login is unavailable
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.UNAVAILABLE_LOGIN),
+                    getExceptionMsgSource(ErrorCodes.UNAVAILABLE_LOGIN_USER));
 
         String role;
 
@@ -112,9 +112,6 @@ public class UserService {
 
         User user = selectPrincipal(principal);
 
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
-
         return ResponseEntity.ok(movieRepository.selectRentedMovies(user));
     }
 
@@ -122,19 +119,22 @@ public class UserService {
 
         User user = selectPrincipal(principal);
 
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
-
         if (!isAllMoviesExist(moviesIds))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotFoundMsg);
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_FOUND),
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_FOUND_USER));
 
         List<Movie> moviesToRentJpa = movieRepository.getMoviesByIds(moviesIds);
 
         if (!isAllMoviesAvaliable(moviesToRentJpa))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotAvailableMsg);
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_AVAILABLE),
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_AVAILABLE_USER));
 
         if (!canRent(user, moviesIds.size()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceededRentalLimitMsg); //can only rent max of ten movies
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.MAX_RENT_EXC),
+                    getExceptionMsgSource(ErrorCodes.MAX_RENT_EXC_USER));
 
 
         //copy movies into new list so jpa won't persist changed prices of movies
@@ -164,9 +164,6 @@ public class UserService {
 
         User user = userRepository.findOne(userId);
 
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
-
         return ResponseEntity.ok(movieRepository.selectRentedMovies(user));
     }
 
@@ -174,11 +171,10 @@ public class UserService {
 
         User user = selectPrincipal(principal);
 
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userNotFoundMsg);
-
         if (!isAllReturnedMoviesAreRented(moviesIds, user))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(moviesNotRentedMsg);
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_RENTED),
+                    getExceptionMsgSource(ErrorCodes.MOVIES_NOT_RENTED_USER));
 
         movieRepository.returnMovies(moviesIds);
 
@@ -349,5 +345,14 @@ public class UserService {
         }
 
         return true;
+    }
+
+    /**
+     * Retrives exception message from String's message source
+     */
+    private String getExceptionMsgSource(String msgCode){
+
+        return exceptionMessageSource.getMessage(
+                msgCode, null, "Something went wrong.", null);
     }
 }

@@ -3,11 +3,13 @@ package com.izbicki.jakub.Service;
 import com.izbicki.jakub.Entity.Actor;
 import com.izbicki.jakub.Entity.Cast;
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.Error.ApiNotFoundException;
 import com.izbicki.jakub.Repository.ActorRepository;
 import com.izbicki.jakub.Repository.CastRepository;
 import com.izbicki.jakub.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class CastService {
     @Autowired @Qualifier("ActorService")
     private ActorService as;
 
-    public List<Cast> selectAll(){
+    public ResponseEntity selectAll(){
 
         List<Cast> castsList = new ArrayList<>();
 
@@ -36,37 +38,55 @@ public class CastService {
 
             castsList.add(cast);
         }
-        return castsList;
+        return ResponseEntity.ok(castsList);
     }
 
-    public Cast insert(Long movieId, Long actorId){
+    public ResponseEntity insert(Long movieId, Long actorId){
 
-        Cast cast = new Cast(movieRepository.findOne(movieId), actorRepository.findOne(actorId));
+        Movie movie = movieRepository.findOne(movieId);
+        Actor actor = actorRepository.findOne(actorId);
+
+        if (movie == null)
+            throw new ApiNotFoundException("movie");
+        if (actor == null)
+            throw new ApiNotFoundException("actor");
+
+        Cast cast = new Cast(movie, actor);
 
         castRepository.save(cast);
 
-        return cast;
+        return ResponseEntity.ok(cast);
     }
 
-    public List<Cast> remove(Long movieId, Long actorId){
+    public ResponseEntity remove(Long movieId, Long actorId){
 
-        List<Cast> castList = castRepository.selectCastWhereMovieActor(movieRepository.findOne(movieId),
-                                                             actorRepository.findOne(actorId));
+        Movie movie = movieRepository.findOne(movieId);
+        Actor actor = actorRepository.findOne(actorId);
+
+        if (movie == null)
+            throw new ApiNotFoundException("movie");
+        if (actor == null)
+            throw new ApiNotFoundException("actor");
+
+        List<Cast> castList = castRepository.selectCastWhereMovieActor(movie, actor);
             if (castList.size() > 0){
 
                 Cast cast = castList.get(0);
 
                 castRepository.delete(cast.getId());
 
-                return selectAll();
+                return ResponseEntity.ok(selectAll());
             }
 
-            return selectAll();
+            return ResponseEntity.ok(selectAll());
     }
 
-    public List<Actor> getActorsForMovie(Long movieId){
+    public ResponseEntity getActorsForMovie(Long movieId){
 
         Movie movie = movieRepository.findOne(movieId);
+
+        if (movie == null)
+            throw new ApiNotFoundException("movie");
 
         List<Cast> castList = castRepository.findCastByMovieId(movie);
 
@@ -76,12 +96,16 @@ public class CastService {
             actors.add(cast.getActor());
         }
 
-        return actors;
+        return ResponseEntity.ok(actors);
     }
 
-    public List<Cast> removeCastOfMovie(Long movieId){
+    public ResponseEntity removeCastOfMovie(Long movieId){
 
         Movie movie = movieRepository.findOne(movieId);
+
+        if (movie == null)
+            throw new ApiNotFoundException("movie");
+
         castRepository.deleteCastOfMovie(movie);
 
         return selectAll();

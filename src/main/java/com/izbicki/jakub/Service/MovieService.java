@@ -1,18 +1,28 @@
 package com.izbicki.jakub.Service;
 
 import com.izbicki.jakub.Entity.Movie;
+import com.izbicki.jakub.Error.ApiCustomException;
+import com.izbicki.jakub.Error.ApiNotFoundException;
+import com.izbicki.jakub.Error.ErrorCodes;
 import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component("MovieService")
 public class MovieService {
+
+    @Autowired
+    private ResourceBundleMessageSource exceptionMessageSource;
 
     @Autowired
     private MovieRepository movieRepository;
@@ -20,7 +30,7 @@ public class MovieService {
     @Autowired @Qualifier("CastService")
     private CastService cs;
 
-    public List<Movie> selectAll(){
+    public ResponseEntity selectAll(){
 
         List<Movie> moviesList = new ArrayList<>();
 
@@ -28,23 +38,36 @@ public class MovieService {
 
             moviesList.add(movie);
         }
-        return moviesList;
+        return ResponseEntity.ok(moviesList);
     }
 
-    public Movie selectMovie(long id){
+    public ResponseEntity selectMovie(long id){
 
-        return movieRepository.findOne(id);
+        Movie movie = movieRepository.findOne(id);
+
+        if (movie == null)
+            throw new ApiNotFoundException("movie");
+
+        return ResponseEntity.ok(movie);
     }
 
-    public Movie insert(String title, String desc, MovieType type, BigDecimal price){
+    public ResponseEntity insert(String title, String desc, int movieType, BigDecimal price){
+
+
+        if (!Arrays.asList(0, 1, 2).contains(movieType))
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM),
+                    getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM_USER));
+
+        MovieType type = MovieType.values()[movieType];
 
         Movie movie = new Movie(title, desc, type, price, true);
 
         movieRepository.save(movie);
-        return movie;
+        return ResponseEntity.ok(movie);
     }
 
-    public List<Movie> remove(long id){
+    public ResponseEntity remove(long id){
 
         cs.removeCastOfMovie(id);
 
@@ -53,7 +76,10 @@ public class MovieService {
         return selectAll();
     }
 
-    public Movie update(long id, String title, String desc, Integer type, Float price){
+    public ResponseEntity update(long id, String title, String desc, Integer type, Float price){
+
+        if (movieRepository.findOne(id) == null)
+            throw new ApiNotFoundException("movie");
 
         if (title != null)
             movieRepository.updateMovieTitle(id, title);
@@ -64,46 +90,55 @@ public class MovieService {
         if (price != null)
             movieRepository.updateMoviePrice(id, price);
 
-        return movieRepository.findOne(id);
+        return ResponseEntity.ok(movieRepository.findOne(id));
     }
 
-    public List<Movie> selectNewest(){
+    public ResponseEntity selectNewest(){
 
         List<Movie> moviesList = new ArrayList<>();
 
         for(Movie movie : movieRepository.selectAvailableNewest())
             moviesList.add(movie);
 
-        return moviesList;
+        return ResponseEntity.ok(moviesList);
     }
 
-    public List<Movie> selectHits(){
+    public ResponseEntity selectHits(){
 
         List<Movie> moviesList = new ArrayList<>();
 
         for(Movie movie : movieRepository.selectAvailableHits())
             moviesList.add(movie);
 
-        return moviesList;
+        return ResponseEntity.ok(moviesList);
     }
 
-    public List<Movie> selectOther(){
+    public ResponseEntity selectOther(){
 
         List<Movie> moviesList = new ArrayList<>();
 
         for(Movie movie : movieRepository.selectAvailableOther())
             moviesList.add(movie);
 
-        return moviesList;
+        return ResponseEntity.ok(moviesList);
     }
 
-    public List<Movie> selectAvaliable(){
+    public ResponseEntity selectAvaliable(){
 
         List<Movie> moviesList = new ArrayList<>();
 
         for(Movie movie : movieRepository.selectAvailable())
             moviesList.add(movie);
 
-        return moviesList;
+        return ResponseEntity.ok(moviesList);
+    }
+
+    /**
+     * Retrives exception message from String's message source
+     */
+    private String getExceptionMsgSource(String msgCode){
+
+        return exceptionMessageSource.getMessage(
+                msgCode, null, "Something went wrong.", null);
     }
 }

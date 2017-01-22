@@ -1,16 +1,14 @@
 package com.izbicki.jakub.Service;
 
 import com.izbicki.jakub.Entity.Actor;
+import com.izbicki.jakub.Error.ApiNotFoundException;
 import com.izbicki.jakub.Repository.ActorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Jakub on 19.12.2016.
- */
 
 @Component("ActorService")
 public class ActorService {
@@ -18,7 +16,7 @@ public class ActorService {
     @Autowired
     private ActorRepository actorRepository;
 
-    public List<Actor> selectAll(){
+    public ResponseEntity selectAll(){
 
         List<Actor> actorList = new ArrayList<>();
 
@@ -26,37 +24,48 @@ public class ActorService {
 
             actorList.add(actor);
         }
-        return actorList;
+        return ResponseEntity.ok(actorList);
     }
 
-    public Actor select(long id){
+    public ResponseEntity select(long id){
 
-        return actorRepository.findOne(id);
+        Actor actor = actorRepository.findOne(id);
+
+        if (actor == null)
+            throw new ApiNotFoundException("actor");
+
+        return ResponseEntity.ok(actor);
     }
 
-    public Actor insert(String name){
+    public ResponseEntity insert(String name){
 
         Actor actor = new Actor(name);
 
         actorRepository.save(actor);
 
-        return actor;
+        return ResponseEntity.ok(actor);
     }
 
-    public List<Actor> remove(long id){
+    public ResponseEntity remove(long id){
+
+        if (actorRepository.findOne(id) == null)
+            throw new ApiNotFoundException("actor");
 
         actorRepository.delete(id);
         return selectAll();
     }
 
-    public Actor update(long id, String name){
+    public ResponseEntity update(long id, String name){
 
         Actor actor = actorRepository.findOne(id);
+
+        if (actor == null)
+            throw new ApiNotFoundException("actor");
 
         actorRepository.updateActorName(id, name);
 
         actor.setName(name);
 
-        return actor;
+        return ResponseEntity.ok(actor);
     }
 }
