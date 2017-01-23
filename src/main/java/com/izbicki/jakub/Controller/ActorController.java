@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -33,9 +32,9 @@ public class ActorController {
     }
 
     @RequestMapping(value = "/admin/actors", method = POST)
-    public ResponseEntity insertActor(@RequestParam(value = "name") String name, UriComponentsBuilder ucb){
+    public ResponseEntity insertActor(@RequestParam(value = "name") String name){
 
-        return as.insert(name, ucb);
+        return as.insert(name);
     }
 
     @RequestMapping(value = "/admin/actors/{id}", method = DELETE)

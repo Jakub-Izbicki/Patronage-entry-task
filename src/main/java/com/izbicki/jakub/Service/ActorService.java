@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +38,13 @@ public class ActorService {
         return ResponseEntity.ok(actor);
     }
 
-    public ResponseEntity insert(String name, UriComponentsBuilder ucb){
+    public ResponseEntity insert(String name){
 
         Actor actor = new Actor(name);
 
         actorRepository.save(actor);
 
-        String location = ucb.toUriString() + "/actors/" + actor.getId().toString();
+        String location = "/actors/" + actor.getId().toString();
 
         return ResponseEntity.status(HttpStatus.CREATED).header("Location", location).body(actor);
     }

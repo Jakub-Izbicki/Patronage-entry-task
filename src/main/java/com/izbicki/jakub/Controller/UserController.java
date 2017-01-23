@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.security.Principal;
 import java.util.List;
@@ -40,18 +39,16 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = POST)
     public ResponseEntity add(@RequestHeader(value = "login") String login,
-                              @RequestHeader(value = "password") String password,
-                              UriComponentsBuilder ucb) {
+                              @RequestHeader(value = "password") String password) {
 
-        return us.addUser(login, password, false, ucb);
+        return us.addUser(login, password, false);
     }
 
     @RequestMapping(value = "/admin/users", method = POST)
     public ResponseEntity addAdmin(@RequestHeader(value = "login") String login,
-                                   @RequestHeader(value = "password") String password,
-                                   UriComponentsBuilder ucb) {
+                                   @RequestHeader(value = "password") String password) {
 
-        return us.addUser(login, password, true, ucb);
+        return us.addUser(login, password, true);
     }
 
     @RequestMapping(value = "/users/movies", method = POST)

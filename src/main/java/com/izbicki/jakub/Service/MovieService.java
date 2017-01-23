@@ -12,7 +12,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class MovieService {
         return ResponseEntity.ok(movie);
     }
 
-    public ResponseEntity insert(String title, String desc, int movieType, BigDecimal price, UriComponentsBuilder ucb){
+    public ResponseEntity insert(String title, String desc, int movieType, BigDecimal price){
 
 
         if (!Arrays.asList(0, 1, 2).contains(movieType))
@@ -66,9 +65,11 @@ public class MovieService {
 
         movieRepository.save(movie);
 
-        String location = ucb.toUriString() + "/movies/" + movie.getId().toString();
+        String location = "/movies/" + movie.getId().toString();
 
-        return ResponseEntity.status(HttpStatus.CREATED).header("Location", location).body(movie);
+        System.out.println(location);
+
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", "asa").body(movie);
     }
 
     public ResponseEntity remove(long id){

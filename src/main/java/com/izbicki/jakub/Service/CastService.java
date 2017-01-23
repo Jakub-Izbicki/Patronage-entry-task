@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class CastService {
         return ResponseEntity.ok(castsList);
     }
 
-    public ResponseEntity insert(Long movieId, Long actorId, UriComponentsBuilder ucb){
+    public ResponseEntity insert(Long movieId, Long actorId){
 
         Movie movie = movieRepository.findOne(movieId);
         Actor actor = actorRepository.findOne(actorId);
@@ -57,7 +56,7 @@ public class CastService {
 
         castRepository.save(cast);
 
-        String location = ucb.toUriString() + "/admin/casts/" + cast.getId().toString();
+        String location = "/admin/casts/" + cast.getId().toString();
 
         return ResponseEntity.status(HttpStatus.CREATED).header("Location", location).body(cast);
     }

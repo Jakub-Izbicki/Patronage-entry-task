@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 
@@ -42,12 +41,11 @@ public class MovieController {
     public ResponseEntity insertMovie(@RequestParam(value = "title") String title,
                                       @RequestParam(value = "desc") String desc,
                                       @RequestParam(value = "type") int type,
-                                      @RequestParam(value = "price") BigDecimal price,
-                                      UriComponentsBuilder ucb){
+                                      @RequestParam(value = "price") BigDecimal price){
 
 
 
-        return ms.insert(title, desc, type, price, ucb);
+        return ms.insert(title, desc, type, price);
     }
 
     @RequestMapping(value = "/admin/movies/{id}", method = DELETE)
@@ -74,10 +72,9 @@ public class MovieController {
 
     @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = POST)
     private ResponseEntity insertCast(@PathVariable(value = "id")Long movieId,
-                                      @PathVariable(value = "actorId")Long actorId,
-                                      UriComponentsBuilder ucb){
+                                      @PathVariable(value = "actorId")Long actorId){
 
-        return cs.insert(movieId, actorId, ucb);
+        return cs.insert(movieId, actorId);
     }
 
     @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = DELETE)
