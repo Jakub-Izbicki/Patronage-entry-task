@@ -59,13 +59,6 @@ public class UserService {
         return userList.get(0);
     }
 
-    public ResponseEntity selectUser(Principal principal){
-
-        User user = selectPrincipal(principal);
-
-        return ResponseEntity.ok(user);
-    }
-
     public ResponseEntity selectAll(){
 
         List<User> userList = new ArrayList<>();

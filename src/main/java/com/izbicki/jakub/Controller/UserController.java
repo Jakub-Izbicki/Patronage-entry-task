@@ -25,12 +25,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @RequestMapping(value = "/users/current", method = GET)
-    public ResponseEntity selectUser(Principal principal){
-
-        return us.selectUser(principal);
-    }
-
     @RequestMapping(value = "/admin/users", method = GET)
     public ResponseEntity selectAll(){
 
