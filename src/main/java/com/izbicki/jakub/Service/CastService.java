@@ -9,8 +9,10 @@ import com.izbicki.jakub.Repository.CastRepository;
 import com.izbicki.jakub.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class CastService {
         return ResponseEntity.ok(castsList);
     }
 
-    public ResponseEntity insert(Long movieId, Long actorId){
+    public ResponseEntity insert(Long movieId, Long actorId, UriComponentsBuilder ucb){
 
         Movie movie = movieRepository.findOne(movieId);
         Actor actor = actorRepository.findOne(actorId);
@@ -55,7 +57,9 @@ public class CastService {
 
         castRepository.save(cast);
 
-        return ResponseEntity.ok(cast);
+        String location = ucb.toUriString() + "/admin/casts/" + cast.getId().toString();
+
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", location).body(cast);
     }
 
     public ResponseEntity remove(Long movieId, Long actorId){

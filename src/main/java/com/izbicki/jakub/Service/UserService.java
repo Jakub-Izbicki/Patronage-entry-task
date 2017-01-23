@@ -16,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -81,7 +82,7 @@ public class UserService {
         return inMemoryUserDetailsManager.userExists(login);
     }
 
-    public ResponseEntity addUser(String login, String password, Boolean isAdmin){
+    public ResponseEntity addUser(String login, String password, Boolean isAdmin, UriComponentsBuilder ucb){
 
         if (isUserExists(login))
             throw new ApiCustomException(HttpStatus.BAD_REQUEST,
@@ -89,11 +90,16 @@ public class UserService {
                     getExceptionMsgSource(ErrorCodes.UNAVAILABLE_LOGIN_USER));
 
         String role;
+        String path;
 
-        if (isAdmin)
-          role = ROLE_ADMIN;
-        else
+        if (isAdmin){
+            role = ROLE_ADMIN;
+            path = "/admin/users/";
+        }
+        else{
             role = ROLE_USER;
+            path = "/users/";
+        }
 
         GrantedAuthority sga = new SimpleGrantedAuthority(role);
 
@@ -105,7 +111,9 @@ public class UserService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(user);
+        String location = ucb.toUriString() + path + user.getId().toString();
+
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", location).body(user);
     }
 
     public ResponseEntity selectRentedMovies(Principal principal){

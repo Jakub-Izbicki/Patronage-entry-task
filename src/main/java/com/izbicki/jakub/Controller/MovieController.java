@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 
@@ -39,13 +40,14 @@ public class MovieController {
 
     @RequestMapping(value = "/admin/movies", method = POST)
     public ResponseEntity insertMovie(@RequestParam(value = "title") String title,
-                             @RequestParam(value = "desc") String desc,
-                             @RequestParam(value = "type") int type,
-                             @RequestParam(value = "price") BigDecimal price){
+                                      @RequestParam(value = "desc") String desc,
+                                      @RequestParam(value = "type") int type,
+                                      @RequestParam(value = "price") BigDecimal price,
+                                      UriComponentsBuilder ucb){
 
 
 
-        return ms.insert(title, desc, type, price);
+        return ms.insert(title, desc, type, price, ucb);
     }
 
     @RequestMapping(value = "/admin/movies/{id}", method = DELETE)
@@ -72,9 +74,10 @@ public class MovieController {
 
     @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = POST)
     private ResponseEntity insertCast(@PathVariable(value = "id")Long movieId,
-                            @PathVariable(value = "actorId")Long actorId){
+                                      @PathVariable(value = "actorId")Long actorId,
+                                      UriComponentsBuilder ucb){
 
-        return cs.insert(movieId, actorId);
+        return cs.insert(movieId, actorId, ucb);
     }
 
     @RequestMapping(value = "/admin/movies/{id}/actors/{actorId}", method = DELETE)

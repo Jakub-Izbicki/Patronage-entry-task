@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.security.Principal;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
 @RestController
@@ -41,16 +40,18 @@ public class UserController {
 
     @RequestMapping(value = "/users", method = POST)
     public ResponseEntity add(@RequestHeader(value = "login") String login,
-                    @RequestHeader(value = "password") String password) {
+                              @RequestHeader(value = "password") String password,
+                              UriComponentsBuilder ucb) {
 
-        return us.addUser(login, password, false);
+        return us.addUser(login, password, false, ucb);
     }
 
     @RequestMapping(value = "/admin/users", method = POST)
     public ResponseEntity addAdmin(@RequestHeader(value = "login") String login,
-                    @RequestHeader(value = "password") String password) {
+                                   @RequestHeader(value = "password") String password,
+                                   UriComponentsBuilder ucb) {
 
-        return us.addUser(login, password, true);
+        return us.addUser(login, password, true, ucb);
     }
 
     @RequestMapping(value = "/users/movies", method = POST)
@@ -71,7 +72,7 @@ public class UserController {
         return us.selectRentedMoviesByUserId(userId);
     }
 
-    @RequestMapping(value = "/users/movies", method = PUT)
+    @RequestMapping(value = "/users/movies", method = DELETE)
     public ResponseEntity returnMovies(@RequestParam(value = "movieId") List<Long> movieIdsList, Principal principal){
 
         return us.returnMovies(movieIdsList, principal);
