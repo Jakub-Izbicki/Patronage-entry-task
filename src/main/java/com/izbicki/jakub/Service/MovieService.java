@@ -130,7 +130,10 @@ public class MovieService {
         for(Movie movie : movieRepository.selectAvailable())
             moviesList.add(movie);
 
-        return ResponseEntity.ok(moviesList);
+        return ResponseEntity.status(HttpStatus.OK)
+//                .header("Cache-Control", "max-age=120")
+//                .header("ETag", new Timestamp(System.currentTimeMillis()).toString())
+                .body(moviesList);
     }
 
     /**

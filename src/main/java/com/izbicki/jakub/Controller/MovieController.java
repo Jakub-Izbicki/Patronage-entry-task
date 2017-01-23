@@ -4,6 +4,7 @@ import com.izbicki.jakub.Service.CastService;
 import com.izbicki.jakub.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
+@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XHTML_XML_VALUE})
 public class MovieController {
 
     @Autowired @Qualifier("MovieService")
@@ -100,7 +102,7 @@ public class MovieController {
         return ms.selectOther();
     }
 
-    @RequestMapping(value = "/movies/available", method = GET)
+    @RequestMapping(value = "/movies", method = GET)
     private ResponseEntity selectAvaliable(){
 
         return ms.selectAvaliable();

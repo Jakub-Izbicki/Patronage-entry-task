@@ -66,7 +66,7 @@ PUT: <app_url>/users/movies
 
 FILMY:
 
-GET: <app_url>/movies/available
+GET: <app_url>/movies
 
     Zwraca listę wszystkich filmów aktualnie możliwych do wypożyczenia
     

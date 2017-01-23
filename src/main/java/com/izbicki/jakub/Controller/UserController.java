@@ -5,6 +5,7 @@ import com.izbicki.jakub.Repository.UserRepository;
 import com.izbicki.jakub.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 
 @RestController
+@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XHTML_XML_VALUE})
 public class UserController {
 
     @Autowired @Qualifier("UserService")
