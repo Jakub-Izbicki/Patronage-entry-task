@@ -1,11 +1,11 @@
 package com.izbicki.jakub;
 
-import com.izbicki.jakub.Entity.Movie;
-import com.izbicki.jakub.Entity.User;
-import com.izbicki.jakub.Repository.ActorRepository;
-import com.izbicki.jakub.Repository.CastRepository;
-import com.izbicki.jakub.Repository.MovieRepository;
-import com.izbicki.jakub.Repository.UserRepository;
+import com.izbicki.jakub.entity.Movie;
+import com.izbicki.jakub.entity.User;
+import com.izbicki.jakub.repository.ActorRepository;
+import com.izbicki.jakub.repository.CastRepository;
+import com.izbicki.jakub.repository.MovieRepository;
+import com.izbicki.jakub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,8 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
 
-import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_ADMIN;
-import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
+import static com.izbicki.jakub.security.WebSecurityConfig.ROLE_ADMIN;
+import static com.izbicki.jakub.security.WebSecurityConfig.ROLE_USER;
 
 @SpringBootApplication
 //@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
