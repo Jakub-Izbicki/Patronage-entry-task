@@ -154,9 +154,7 @@ public class MovieService {
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .header("Cache-Control", "max-age=300")
-                .body(moviesList);
+        return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", "max-age=300").body(moviesList);
     }
 
     /**
