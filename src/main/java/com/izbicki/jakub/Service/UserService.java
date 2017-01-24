@@ -30,6 +30,9 @@ import static com.izbicki.jakub.Security.WebSecurityConfig.ROLE_USER;
 public class UserService {
 
     @Autowired
+    private ResourceBundleMessageSource serviceMessageSource;
+
+    @Autowired
     private ResourceBundleMessageSource exceptionMessageSource;
 
     @Autowired
@@ -277,7 +280,9 @@ public class UserService {
                 counter++;
 
             if (counter >= 2){
-                BigDecimal discount = currentWalletValue.multiply(new BigDecimal("0.25"));
+
+                BigDecimal discount = currentWalletValue.multiply(new BigDecimal(
+                        serviceMessageSource.getMessage("DISCOUNT_AMOUNT_PERCENTAGE", null, null, null)));
                 return currentWalletValue.subtract(discount);
             }
         }

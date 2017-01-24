@@ -14,4 +14,12 @@ public class ResourceBundleMessageSourceConfig {
         source.setUseCodeAsDefaultMessage(true);
         return source;
     }
+
+    @Bean
+    public ResourceBundleMessageSource serviceMessageSource() {
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        source.setBasename("service");
+        source.setUseCodeAsDefaultMessage(true);
+        return source;
+    }
 }
