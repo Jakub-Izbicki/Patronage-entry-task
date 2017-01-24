@@ -27,21 +27,22 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
-    @Autowired @Qualifier("CastService")
+    @Autowired
+    @Qualifier("CastService")
     private CastService cs;
 
-    public ResponseEntity selectAll(){
+    public ResponseEntity selectAll() {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for(Movie movie : movieRepository.findAll()){
+        for (Movie movie : movieRepository.findAll()) {
 
             moviesList.add(movie);
         }
         return ResponseEntity.ok(moviesList);
     }
 
-    public ResponseEntity selectMovie(long id){
+    public ResponseEntity selectMovie(long id) {
 
         Movie movie = movieRepository.findOne(id);
 
@@ -51,7 +52,7 @@ public class MovieService {
         return ResponseEntity.ok(movie);
     }
 
-    public ResponseEntity insert(String title, String desc, int movieType, BigDecimal price){
+    public ResponseEntity insert(String title, String desc, int movieType, BigDecimal price) {
 
 
         if (!Arrays.asList(0, 1, 2).contains(movieType))
@@ -72,7 +73,7 @@ public class MovieService {
         return ResponseEntity.status(HttpStatus.CREATED).header("Location", "asa").body(movie);
     }
 
-    public ResponseEntity remove(long id){
+    public ResponseEntity remove(long id) {
 
         cs.removeCastOfMovie(id);
 
@@ -81,7 +82,7 @@ public class MovieService {
         return selectAll();
     }
 
-    public ResponseEntity update(long id, String title, String desc, Integer type, Float price){
+    public ResponseEntity update(long id, String title, String desc, Integer type, Float price) {
 
         if (movieRepository.findOne(id) == null)
             throw new ApiNotFoundException("movie");
@@ -98,42 +99,60 @@ public class MovieService {
         return ResponseEntity.ok(movieRepository.findOne(id));
     }
 
-    public ResponseEntity selectNewest(){
+    public ResponseEntity selectNewest() {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for(Movie movie : movieRepository.selectAvailableNewest())
+        for (Movie movie : movieRepository.selectAvailableNewest())
             moviesList.add(movie);
 
         return ResponseEntity.ok(moviesList);
     }
 
-    public ResponseEntity selectHits(){
+    public ResponseEntity selectHits() {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for(Movie movie : movieRepository.selectAvailableHits())
+        for (Movie movie : movieRepository.selectAvailableHits())
             moviesList.add(movie);
 
         return ResponseEntity.ok(moviesList);
     }
 
-    public ResponseEntity selectOther(){
+    public ResponseEntity selectOther() {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for(Movie movie : movieRepository.selectAvailableOther())
+        for (Movie movie : movieRepository.selectAvailableOther())
             moviesList.add(movie);
 
         return ResponseEntity.ok(moviesList);
     }
 
-    public ResponseEntity selectAvaliable(){
+    public ResponseEntity selectAvailable(Integer category) {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for(Movie movie : movieRepository.selectAvailable())
-            moviesList.add(movie);
+        if (category == null) {
+            moviesList = movieRepository.selectAvailable();
+
+        } else if (!Arrays.asList(0, 1, 2).contains(category)) {
+
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM),
+                    getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM_USER));
+        } else {
+
+            MovieType movieType = MovieType.values()[category];
+
+            if (movieType == MovieType.newest)
+                moviesList = movieRepository.selectAvailableNewest();
+            else if (movieType == MovieType.hits)
+                moviesList = movieRepository.selectAvailableHits();
+            else if (movieType == MovieType.other)
+                moviesList = movieRepository.selectAvailableOther();
+
+        }
 
         return ResponseEntity.status(HttpStatus.OK)
 //                .header("Cache-Control", "max-age=120")
@@ -144,7 +163,7 @@ public class MovieService {
     /**
      * Retrives exception message from String's message source
      */
-    private String getExceptionMsgSource(String msgCode){
+    private String getExceptionMsgSource(String msgCode) {
 
         return exceptionMessageSource.getMessage(
                 msgCode, null, "Something went wrong.", null);

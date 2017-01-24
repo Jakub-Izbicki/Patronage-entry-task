@@ -84,27 +84,9 @@ public class MovieController {
         return cs.remove(movieId, actorId);
     }
 
-    @RequestMapping(value = "/movies/newest", method = GET)
-    private ResponseEntity selectNewest(){
-
-        return ms.selectNewest();
-    }
-
-    @RequestMapping(value = "/movies/hits", method = GET)
-    private ResponseEntity selectHits(){
-
-        return ms.selectHits();
-    }
-
-    @RequestMapping(value = "/movies/other", method = GET)
-    private ResponseEntity selectOther(){
-
-        return ms.selectOther();
-    }
-
     @RequestMapping(value = "/movies", method = GET)
-    private ResponseEntity selectAvaliable(){
+    private ResponseEntity selectAvaliable(@RequestParam(value = "category", required = false) Integer category){
 
-        return ms.selectAvaliable();
+        return ms.selectAvailable(category);
     }
 }
