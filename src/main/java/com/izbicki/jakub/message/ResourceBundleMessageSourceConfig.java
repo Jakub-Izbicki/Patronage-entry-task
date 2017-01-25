@@ -22,4 +22,12 @@ public class ResourceBundleMessageSourceConfig {
         source.setUseCodeAsDefaultMessage(true);
         return source;
     }
+
+    @Bean
+    public ResourceBundleMessageSource applicationConfigMessageSource() {
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        source.setBasename("application");
+        source.setUseCodeAsDefaultMessage(true);
+        return source;
+    }
 }

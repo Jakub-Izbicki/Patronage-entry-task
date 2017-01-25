@@ -22,7 +22,7 @@ import java.util.List;
 public class MovieService {
 
     @Autowired
-    private ResourceBundleMessageSource exceptionMessageSource;
+    private ResourceBundleMessageSource exceptionMessageSource, applicationConfigMessageSource;
 
     @Autowired
     private MovieRepository movieRepository;
@@ -154,7 +154,10 @@ public class MovieService {
 
         }
 
-        return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", "max-age=300").body(moviesList);
+        String maxAge = "max-age=" + applicationConfigMessageSource.getMessage(
+                "CACHE_MAX_TIME", null, null, null);
+
+        return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviesList);
     }
 
     /**
