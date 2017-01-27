@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
-@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class ActorController {
 
     @Autowired @Qualifier("ActorService")

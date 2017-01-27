@@ -131,10 +131,16 @@ public class MovieService {
             if (page != null) {
                 PageRequest pageRequest = new PageRequest(page, pageSize, Sort.Direction.ASC, sortByProperty);
                 moviePage = movieRepository.findAll(pageRequest);
-                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviePage);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .header("Cache-Control", maxAge)
+                        .body(moviePage);
             } else {
                 List<Movie> movieList = movieRepository.findAll();
-                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(movieList);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .header("Cache-Control", maxAge)
+                        .body(movieList);
             }
         }
         else {
@@ -151,7 +157,10 @@ public class MovieService {
                 else if (movieType == MovieType.other)
                     moviePage = movieRepository.selectAvailableOther(pageRequest);
 
-                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviePage);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .header("Cache-Control", maxAge)
+                        .body(moviePage);
             }else {
                 List<Movie> movieList = new ArrayList<>();
 
@@ -160,7 +169,8 @@ public class MovieService {
                         .filter(movie -> movie.getType() == movieType)
                         .collect(Collectors.toList());
 
-                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(movieList);
+                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge)
+                        .body(movieList);
             }
         }
     }
