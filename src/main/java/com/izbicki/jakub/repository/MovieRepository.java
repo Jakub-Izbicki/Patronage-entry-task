@@ -2,6 +2,8 @@ package com.izbicki.jakub.repository;
 
 import com.izbicki.jakub.entity.Movie;
 import com.izbicki.jakub.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,20 +36,17 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     int updateMoviePrice(@Param("id") Long id, @Param("price") float price);
 
 
-    @Modifying
     @Transactional
     @Query("SELECT m FROM Movie m WHERE m.type = 0 AND m.isAvailable = true")
-    List<Movie> selectAvailableNewest();
+    Page<Movie> selectAvailableNewest(Pageable pageable);
 
-    @Modifying
     @Transactional
     @Query("SELECT m FROM Movie m WHERE m.type = 1 AND m.isAvailable = true")
-    List<Movie> selectAvailableHits();
+    Page<Movie> selectAvailableHits(Pageable pageable);
 
-    @Modifying
     @Transactional
     @Query("SELECT m FROM Movie m WHERE m.type = 2 AND m.isAvailable = true")
-    List<Movie> selectAvailableOther();
+    Page<Movie> selectAvailableOther(Pageable pageable);
 
     @Modifying
     @Transactional

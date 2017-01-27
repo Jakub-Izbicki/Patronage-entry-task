@@ -1,14 +1,17 @@
 package com.izbicki.jakub.service;
 
+import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.entity.Movie;
 import com.izbicki.jakub.error.ApiCustomException;
 import com.izbicki.jakub.error.ApiNotFoundException;
 import com.izbicki.jakub.error.ErrorCodes;
-import com.izbicki.jakub.MovieType;
 import com.izbicki.jakub.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -17,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("MovieService")
 public class MovieService {
@@ -99,65 +103,66 @@ public class MovieService {
         return ResponseEntity.ok(movieRepository.findOne(id));
     }
 
-    public ResponseEntity selectNewest() {
+    public ResponseEntity selectAvailable(Integer category, Integer page, Integer pageSize, String sortBy) {
 
-        List<Movie> moviesList = new ArrayList<>();
+        if (page == null ^ pageSize == null) {
 
-        for (Movie movie : movieRepository.selectAvailableNewest())
-            moviesList.add(movie);
+            throw new ApiCustomException(HttpStatus.BAD_REQUEST,
+                    getExceptionMsgSource(ErrorCodes.BAD_PAGE_PARAM),
+                    getExceptionMsgSource(ErrorCodes.BAD_PAGE_PARAM_USER));
+        }
 
-        return ResponseEntity.ok(moviesList);
-    }
-
-    public ResponseEntity selectHits() {
-
-        List<Movie> moviesList = new ArrayList<>();
-
-        for (Movie movie : movieRepository.selectAvailableHits())
-            moviesList.add(movie);
-
-        return ResponseEntity.ok(moviesList);
-    }
-
-    public ResponseEntity selectOther() {
-
-        List<Movie> moviesList = new ArrayList<>();
-
-        for (Movie movie : movieRepository.selectAvailableOther())
-            moviesList.add(movie);
-
-        return ResponseEntity.ok(moviesList);
-    }
-
-    public ResponseEntity selectAvailable(Integer category) {
-
-        List<Movie> moviesList = new ArrayList<>();
-
-        if (category == null) {
-            moviesList = movieRepository.selectAvailable();
-
-        } else if (!Arrays.asList(0, 1, 2).contains(category)) {
+        if (category != null && !Arrays.asList(0, 1, 2).contains(category)) {
 
             throw new ApiCustomException(HttpStatus.BAD_REQUEST,
                     getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM),
                     getExceptionMsgSource(ErrorCodes.BAD_MOVIE_ENUM_USER));
-        } else {
-
-            MovieType movieType = MovieType.values()[category];
-
-            if (movieType == MovieType.newest)
-                moviesList = movieRepository.selectAvailableNewest();
-            else if (movieType == MovieType.hits)
-                moviesList = movieRepository.selectAvailableHits();
-            else if (movieType == MovieType.other)
-                moviesList = movieRepository.selectAvailableOther();
-
         }
 
-        String maxAge = "max-age=" + applicationConfigMessageSource.getMessage(
+        String sortByProperty = sortBy != null ? sortBy : "title";
+
+        String maxAge  = "max-age=" + applicationConfigMessageSource.getMessage(
                 "CACHE_MAX_TIME", null, null, null);
 
-        return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviesList);
+        Page<Movie> moviePage = null;
+
+        if (category == null) {
+
+            if (page != null) {
+                PageRequest pageRequest = new PageRequest(page, pageSize, Sort.Direction.ASC, sortByProperty);
+                moviePage = movieRepository.findAll(pageRequest);
+                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviePage);
+            } else {
+                List<Movie> movieList = movieRepository.findAll();
+                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(movieList);
+            }
+        }
+        else {
+            MovieType movieType = MovieType.values()[category];
+
+            if (page !=null){
+
+                PageRequest pageRequest = new PageRequest(page, pageSize, Sort.Direction.ASC, sortByProperty);
+
+                if (movieType == MovieType.newest)
+                    moviePage = movieRepository.selectAvailableNewest(pageRequest);
+                else if (movieType == MovieType.hits)
+                    moviePage = movieRepository.selectAvailableHits(pageRequest);
+                else if (movieType == MovieType.other)
+                    moviePage = movieRepository.selectAvailableOther(pageRequest);
+
+                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(moviePage);
+            }else {
+                List<Movie> movieList = new ArrayList<>();
+
+                movieList = movieRepository.findAll()
+                        .stream()
+                        .filter(movie -> movie.getType() == movieType)
+                        .collect(Collectors.toList());
+
+                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge).body(movieList);
+            }
+        }
     }
 
     /**

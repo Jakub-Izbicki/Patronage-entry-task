@@ -17,4 +17,6 @@ public interface ErrorCodes {
     String MOVIES_NOT_FOUND_USER = "MOVIES_NOT_FOUND_USER";
     String BAD_MOVIE_ENUM = "BAD_MOVIE_ENUM";
     String BAD_MOVIE_ENUM_USER = "BAD_MOVIE_ENUM";
+    String BAD_PAGE_PARAM = "BAD_PAGE_PARAM";
+    String BAD_PAGE_PARAM_USER = "BAD_PAGE_PARAM_USER";
 }

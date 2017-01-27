@@ -85,8 +85,11 @@ public class MovieController {
     }
 
     @RequestMapping(value = "/movies", method = GET)
-    private ResponseEntity selectAvailable(@RequestParam(value = "category", required = false) Integer category){
+    private ResponseEntity selectAvailable(@RequestParam(value = "category", required = false) Integer category,
+                                           @RequestParam(value = "page", required = false) Integer page,
+                                           @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                           @RequestParam(value = "sortBy", required = false) String sortBy){
 
-        return ms.selectAvailable(category);
+        return ms.selectAvailable(category, page, pageSize, sortBy);
     }
 }
