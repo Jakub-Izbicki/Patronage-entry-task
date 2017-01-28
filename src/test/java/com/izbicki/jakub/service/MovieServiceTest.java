@@ -5,6 +5,7 @@ import com.izbicki.jakub.entity.Actor;
 import com.izbicki.jakub.entity.Cast;
 import com.izbicki.jakub.entity.Movie;
 import com.izbicki.jakub.MovieType;
+import com.izbicki.jakub.error.ApiNotFoundException;
 import com.izbicki.jakub.repository.ActorRepository;
 import com.izbicki.jakub.repository.CastRepository;
 import com.izbicki.jakub.repository.MovieRepository;
@@ -78,7 +79,7 @@ public class MovieServiceTest {
                 movie.getId());
     }
 
-    @Test
+    @Test(expected = ApiNotFoundException.class)
     public void testFindOneNotFound() {
 
         Long id = Long.MAX_VALUE;
@@ -118,7 +119,7 @@ public class MovieServiceTest {
                 updatedMovie.getId());
     }
 
-    @Test
+    @Test(expected = ApiNotFoundException.class)
     public void testDelete() {
 
         Long id = 1L;
