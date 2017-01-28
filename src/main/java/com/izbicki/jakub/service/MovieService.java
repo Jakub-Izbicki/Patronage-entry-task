@@ -121,7 +121,7 @@ public class MovieService {
 
         String sortByProperty = sortBy != null ? sortBy : "title";
 
-        String maxAge  = "max-age=" + applicationConfigMessageSource.getMessage(
+        String maxAge = "max-age=" + applicationConfigMessageSource.getMessage(
                 "CACHE_MAX_TIME", null, null, null);
 
         Page<Movie> moviePage = null;
@@ -142,11 +142,10 @@ public class MovieService {
                         .header("Cache-Control", maxAge)
                         .body(movieList);
             }
-        }
-        else {
+        } else {
             MovieType movieType = MovieType.values()[category];
 
-            if (page !=null){
+            if (page != null) {
 
                 PageRequest pageRequest = new PageRequest(page, pageSize, Sort.Direction.ASC, sortByProperty);
 
@@ -161,15 +160,17 @@ public class MovieService {
                         .status(HttpStatus.OK)
                         .header("Cache-Control", maxAge)
                         .body(moviePage);
-            }else {
-                List<Movie> movieList = new ArrayList<>();
+            } else {
 
-                movieList = movieRepository.findAll()
+                List<Movie> movieList = movieRepository
+                        .findAll()
                         .stream()
                         .filter(movie -> movie.getType() == movieType)
                         .collect(Collectors.toList());
 
-                return ResponseEntity.status(HttpStatus.OK).header("Cache-Control", maxAge)
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .header("Cache-Control", maxAge)
                         .body(movieList);
             }
         }

@@ -2,11 +2,14 @@
 
 Task for Patronage 2017 entry evaluation - rest api.
 
+TASK 3: (new)
+
+Link to Swagger documentation:
+
+<app_url>/swagger-ui.html
+
+
 Dokumentacja PL:
-
-Restowe api wypożyczalni filmów.
-
-ZADANIE 2: (nowe)
 
 Dostęp do api zabezpieczony jest uwierzytelnieniem typu Basic Auth. Wymagane jest podanie loginu i hasła w headerze wraz
 z wysyłanym zapytaniem. Przykładowi użytkownicy zdefiniowani są w pliku WebSecurityConfig (inMemoryUserDetailsManager).
@@ -16,6 +19,10 @@ informacji o filmach, aktorach, wypożyczonych filmach, informacji o swoim profi
 Podaczas tworzenia nowego użytkownika autentykacja nie jest wymagana (z wyjątkiem tworzenia użytkownika typu ADMIN, do 
 czego mają dostęp tylko admini).
 Do pozostałych operacji mają dostęp tylko użytkownicy o roli ADMIN.
+
+
+ZADANIE 2: (stare)
+
 
 Lista dostępnych operacji:
 
